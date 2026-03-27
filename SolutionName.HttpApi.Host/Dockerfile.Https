@@ -1,0 +1,12 @@
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+WORKDIR /app
+EXPOSE 8080
+EXPOSE 8081
+
+ENV ASPNETCORE_ENVIRONMENT=Development
+ENV TZ="Asia/Shanghai"
+ENV ASPNETCORE_HTTP_PORTS=8080
+ENV ASPNETCORE_HTTPS_PORTS=8081
+ENV ASPNETCORE_Kestrel__Certificates__Default__Path=/https/localhost.pfx
+COPY . .
+ENTRYPOINT ["dotnet", "SolutionName.HttpApi.Host.dll"]

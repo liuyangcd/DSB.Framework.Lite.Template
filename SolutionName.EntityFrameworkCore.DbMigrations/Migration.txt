@@ -1,0 +1,40 @@
+﻿前提依赖包：Microsoft.EntityFrameworkCore.Tools
+------------------------------------------------VS中迁移管理依赖包：---------------------------------------
+
+创建一个迁移点，并指定名称
+Add-Migration InitialCreate
+
+删除上一个迁移点
+Remove-Migration
+
+生成幂等迁移脚本
+Script-Migration -Idempotent from name1 to name2
+
+-----------------------------------------------dotnet cli--------------------------------------------------------
+
+安装ef工具
+dotnet tool install --global dotnet-ef --version 8.0.22
+更新工具
+dotnet tool update --global dotnet-ef --version 8.0.22
+注意版本号要和项目中的efcore版本号对应
+如果已经安装了更高版本，可以卸载之后在安装对应版本，或者使用Nuget包管理器控制台管理迁移
+dotnet tool uninstall --global dotnet-ef
+
+从 DbContext 生成 SQL 脚本。 绕过任何迁移。
+dotnet ef dbcontext script -o init.sql
+
+创建一个迁移点
+dotnet ef migrations add update001
+删除上一次迁移，回退为上一次迁移所做的代码更改。
+dotnet ef migrations remove
+从迁移生成 SQL 脚本
+dotnet ef migrations script -i -o ./SQL/update000_001.sql 0 update001
+参数	                    说明
+<FROM>	            初始迁移。 可以按名称或 ID 识别迁移。 数字 0 是一种特殊情况，表示首次迁移之前。 约定为 0。
+<TO>	                    结束迁移。 默认为上一次迁移。
+
+将数据库更新到上一次迁移或指定的迁移。注意数据库必须要有迁移表记录
+dotnet ef database update
+
+创建可执行文件以更新数据库。注意需要EFcore版本6.0以上
+dotnet ef migrations bundle

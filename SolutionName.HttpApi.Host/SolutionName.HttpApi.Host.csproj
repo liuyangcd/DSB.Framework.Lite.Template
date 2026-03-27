@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DSB.Framework.Lite.Data.EFCore.Repository.WebApi" Version="1.0.3" />
+    <PackageReference Include="DSB.Framework.Lite.Hangfire.Extensions" Version="1.0.5" />
+    <PackageReference Include="DSB.Framework.Lite.WebApi.ApiKeyAuthorization" Version="1.0.3" />
+    <PackageReference Include="DSB.Framework.Lite.WebApi.EncryptionApi" Version="1.0.1" />
+    <PackageReference Include="DSB.Framework.Lite.WebApi.Extensions" Version="1.0.17" />
+    <PackageReference Include="Serilog.AspNetCore" Version="8.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SolutionName.Application\SolutionName.Application.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Certs\localhost.pfx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Dockerfile">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Dockerfile.Https">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

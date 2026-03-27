@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="DSB.Framework.Lite.Application.HttpClient.Binder" Version="1.0.2" />
+		<PackageReference Include="DSB.Framework.Lite.Application.PBKDF2Password" Version="1.0.3" />
+		<PackageReference Include="DSB.Framework.Lite.Caching.Extensions" Version="1.0.13" />
+		<PackageReference Include="DSB.Framework.Lite.Service.Extensions" Version="1.0.4" />
+		<PackageReference Include="DSB.Framework.Lite.Tools.Captcha" Version="1.0.2" />
+		<PackageReference Include="Hangfire.Core" Version="1.8.22" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\SolutionName.Application.Contracts\SolutionName.Application.Contracts.csproj" />
+	</ItemGroup>
+
+</Project>

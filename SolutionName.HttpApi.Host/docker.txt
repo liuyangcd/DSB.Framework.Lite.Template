@@ -1,0 +1,8 @@
+﻿构建镜像
+docker build -t solutionname.httpapi.host:v1 -f ./Dockerfile.Https .
+
+启动容器
+docker run -d -p 8090:8080 -p 8091:8081 -e ASPNETCORE_Kestrel__Certificates__Default__Password="12345678" --restart=always -v /root/app/test/api/logs:/app/logs -v /root/app/test/api/Certs:/https --name solutionname.httpapi.host solutionname.httpapi.host:v1
+
+兼容老版本docker命令
+docker run --security-opt seccomp=unconfined -d -p 4080:8080 -p 4081:8081 -e ASPNETCORE_Kestrel__Certificates__Default__Password="12345678" --restart=always -v /root/app/test/api/logs:/app/logs -v /root/app/test/api/Certs:/https --name solutionname.httpapi.host solutionname.httpapi.host:v1
