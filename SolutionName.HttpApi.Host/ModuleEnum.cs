@@ -8,6 +8,12 @@ namespace SolutionName.HttpApi.Host
     public enum ModuleEnum
     {
         /// <summary>
+        /// 鉴权管理
+        /// </summary>
+        [Display(Name = nameof(Auth), Description = "鉴权管理", Order = (int)Auth)]
+        Auth,
+
+        /// <summary>
         /// 用户管理
         /// </summary>
         [Display(Name = nameof(User), Description = "用户管理", Order = (int)User)]

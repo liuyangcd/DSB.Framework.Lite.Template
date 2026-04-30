@@ -2,10 +2,8 @@
 using DSB.Framework.Lite.Data.EFCore.Repository.Abstractions;
 using DSB.Framework.Lite.WebApi.Extensions.Http.JwtBearer;
 using DSB.Framework.Lite.WebApi.Extensions.SwaggerConfig.Attributes;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SolutionName.Application.Contracts.Dtos.Systems.Users;
-using SolutionName.Application.Contracts.UserContext;
 using SolutionName.Application.Services.Systems;
 
 namespace SolutionName.HttpApi.Host.Controllers.Systems
@@ -16,64 +14,8 @@ namespace SolutionName.HttpApi.Host.Controllers.Systems
     [ApiExplorer(ModuleEnum.User)]
     public class UserController(
         IJwtService jwtService,
-        UserService userService,
-        IWebHostEnvironment webHostEnvironment) : ManagerControllerBase(jwtService)
+        UserService userService) : ManagerControllerBase(jwtService)
     {
-        #region 鉴权管理
-
-        /// <summary>
-        /// 获取验证码
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        [AllowAnonymous]
-        public async Task<GetCaptchaOutputDto> GetCaptcha()
-        {
-            var (imageBase64, id) = await CaptchaService.Create();
-            return new GetCaptchaOutputDto()
-            {
-                Id = id,
-                ImageBase64 = $"data:image/png;base64,{imageBase64}"
-            };
-        }
-
-        /// <summary>
-        /// 登录
-        /// </summary>
-        /// <returns></returns>
-        [HttpPost]
-        [AllowAnonymous]
-        public async Task<ApiResult<JwtTokenModel>> Login(LoginInputDto inputDto)
-        {
-            // 1，密码是否需要加密传参
-            // 2，需要新增登录失败次数限制和请求速率限制功能
-
-            // 只有非开发环境才校验验证码
-            if (!webHostEnvironment.IsDevelopment() && !await CaptchaService.Verify(inputDto.CaptchaId, inputDto.CaptchaCode))
-            {
-                throw new BusinessException("验证码错误");
-            }
-
-            var userContext = await userService.LoginAsync(inputDto, jwtService.ExpireTimeSpan);
-
-            var token = jwtService.CreateToken<JwtUserContext, Guid>(userContext);
-
-            return ApiResult<JwtTokenModel>.GetSuccess(token);
-        }
-
-        /// <summary>
-        /// 获取当前登录用户信息，含权限信息
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        public async Task<ApiResult<InfoOutputDto>> Info()
-        {
-            var info = await userService.GetInfoAsync(UserContext.Id, jwtService.ExpireTimeSpan);
-            return ApiResult<InfoOutputDto>.GetSuccess(info);
-        }
-
-        #endregion
-
         #region 用户管理
 
         /// <summary>
