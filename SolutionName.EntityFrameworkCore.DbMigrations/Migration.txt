@@ -13,9 +13,9 @@ Script-Migration -Idempotent from name1 to name2
 -----------------------------------------------dotnet cli--------------------------------------------------------
 
 安装ef工具
-dotnet tool install --global dotnet-ef --version 8.0.22
+dotnet tool install --global dotnet-ef --version 8.0.23
 更新工具
-dotnet tool update --global dotnet-ef --version 8.0.22
+dotnet tool update --global dotnet-ef --version 8.0.23
 注意版本号要和项目中的efcore版本号对应
 如果已经安装了更高版本，可以卸载之后在安装对应版本，或者使用Nuget包管理器控制台管理迁移
 dotnet tool uninstall --global dotnet-ef
