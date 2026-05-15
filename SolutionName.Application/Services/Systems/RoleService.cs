@@ -6,7 +6,7 @@ using SolutionName.Application.Contracts.Dtos.Systems.Roles;
 using SolutionName.Domain.Entities.Systems;
 using SolutionName.Domain.Enums;
 using SolutionName.EntityFrameworkCore;
-using SolutionName.EntityFrameworkCore.Repositories.Systems;
+using SolutionName.EntityFrameworkCore.IRepositories.Systems;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +20,7 @@ namespace SolutionName.Application.Services.Systems
     /// 角色管理服务
     /// </summary>
     public class RoleService(
-        RoleRepository roleRepository,
+        IRoleRepository roleRepository,
         IGuidGenerator guidGenerator) : SolutionNameApplicationService
     {
 

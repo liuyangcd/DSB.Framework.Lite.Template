@@ -1,9 +1,11 @@
 ﻿using DSB.Framework.Lite.Core;
+using DSB.Framework.Lite.Data.EFCore.Extensions.SequentialGuid;
 using DSB.Framework.Lite.Data.EFCore.Repository.Abstractions;
 using SolutionName.Application.Contracts.Dtos.Systems.Permissions;
 using SolutionName.Domain.Entities.Systems;
 using SolutionName.Domain.Enums;
 using SolutionName.Domain.Enums.Systems;
+using SolutionName.EntityFrameworkCore.IRepositories.Systems;
 using SolutionName.EntityFrameworkCore.Repositories.Systems;
 using System;
 using System.Collections.Generic;
@@ -11,7 +13,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
-using DSB.Framework.Lite.Data.EFCore.Extensions.SequentialGuid;
 
 namespace SolutionName.Application.Services.Systems
 {
@@ -19,7 +20,7 @@ namespace SolutionName.Application.Services.Systems
     /// 权限管理服务
     /// </summary>
     public class PermissionService(
-        PermissionRepository permissionRepository,
+        IPermissionRepository permissionRepository,
         IGuidGenerator guidGenerator) : SolutionNameApplicationService
     {
         /// <summary>

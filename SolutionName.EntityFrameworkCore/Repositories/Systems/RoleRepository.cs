@@ -4,6 +4,7 @@ using DSB.Framework.Lite.Data.EFCore.Repository;
 using Microsoft.EntityFrameworkCore;
 using SolutionName.Domain.Entities.Systems;
 using SolutionName.Domain.Enums;
+using SolutionName.EntityFrameworkCore.IRepositories.Systems;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,7 @@ namespace SolutionName.EntityFrameworkCore.Repositories.Systems
         IUnitOfWork<SolutionNameContext> unitOfWork,
         IGuidGenerator guidGenerator,
         IEntityFrameworkCoreRepository<SolutionNameContext, SystemPermissionEntity, Guid> permissionRepository,
-        IEntityFrameworkCoreRepository<SolutionNameContext, SystemRolePermissionEntity, Guid> rolePermissionRepository) : EntityFrameworkCoreRepository<SolutionNameContext, SystemRoleEntity, Guid>(unitOfWork)
+        IEntityFrameworkCoreRepository<SolutionNameContext, SystemRolePermissionEntity, Guid> rolePermissionRepository) : EntityFrameworkCoreRepository<SolutionNameContext, SystemRoleEntity, Guid>(unitOfWork), IRoleRepository
     {
         /// <summary>
         /// 初始化角色的权限信息

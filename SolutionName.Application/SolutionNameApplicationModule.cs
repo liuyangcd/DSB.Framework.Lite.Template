@@ -6,6 +6,8 @@ using Hangfire;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SolutionName.Application.BackgroundJob.Jobs;
+using SolutionName.Application.Services.Systems;
+using SolutionName.Domain;
 using SolutionName.Domain.Options;
 
 namespace SolutionName.Application
@@ -54,6 +56,14 @@ namespace SolutionName.Application
             #region 批量自动注册应用服务
 
             services.AddApplicationService<SolutionNameApplicationService>();
+
+            #endregion
+
+            #region 注册种子数据服务
+
+            services.AddTransient<IDataSeedContributor, PermissionDataSeedContributor>();
+            services.AddTransient<IDataSeedContributor, AdminUserDataSeedContributor>();
+            services.AddHostedService<DataSeedHostedService>();
 
             #endregion
         }

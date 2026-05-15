@@ -13,6 +13,7 @@
 		<PackageReference Include="DSB.Framework.Lite.Service.Extensions" Version="1.0.5" />
 		<PackageReference Include="DSB.Framework.Lite.Tools.Captcha" Version="1.0.3" />
 		<PackageReference Include="Hangfire.Core" Version="1.8.22" />
+		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.1" />
 	</ItemGroup>
 
 	<ItemGroup>

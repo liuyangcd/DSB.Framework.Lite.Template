@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using SolutionName.Application.Contracts.Bos.Systems.UploadFIles;
 using SolutionName.Application.Contracts.Dtos.Systems.UploadFIles;
 using SolutionName.Application.Services.Systems;
+using SolutionName.Domain;
 using SolutionName.Domain.Options;
 using System.ComponentModel.DataAnnotations;
 
@@ -25,6 +26,7 @@ namespace SolutionName.HttpApi.Host.Controllers.Systems
         /// </summary>
         /// <returns></returns>
         [HttpGet]
+        [IdentifierAuthorize(SolutionNameConsts.PermissionCodes.FileConfig)]
         public Task<FileUploadOptions> GetOptions()
         {
             return Task.FromResult(uploadFileService.GetOptions());
@@ -39,6 +41,7 @@ namespace SolutionName.HttpApi.Host.Controllers.Systems
         /// <returns></returns>
         [HttpPost]
         [RequestLogIgnore]
+        [IdentifierAuthorize(SolutionNameConsts.PermissionCodes.FileUpload)]
         public async Task<ApiResult<UploadOutputDto>> Upload([Required(ErrorMessage = "上传文件不能为空")] IFormFile file)
         {
             using var fileStream = file.OpenReadStream();

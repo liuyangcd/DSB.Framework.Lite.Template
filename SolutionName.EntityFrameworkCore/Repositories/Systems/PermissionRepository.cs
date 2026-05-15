@@ -1,6 +1,6 @@
-﻿using DSB.Framework.Lite.Data.EFCore.Extensions.SequentialGuid;
-using DSB.Framework.Lite.Data.EFCore.Repository;
+﻿using DSB.Framework.Lite.Data.EFCore.Repository;
 using SolutionName.Domain.Entities.Systems;
+using SolutionName.EntityFrameworkCore.IRepositories.Systems;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +12,7 @@ namespace SolutionName.EntityFrameworkCore.Repositories.Systems
     /// <summary>
     /// 权限仓储
     /// </summary>
-    public class PermissionRepository(IUnitOfWork<SolutionNameContext> unitOfWork) : EntityFrameworkCoreRepository<SolutionNameContext, SystemPermissionEntity, Guid>(unitOfWork)
+    public class PermissionRepository(IUnitOfWork<SolutionNameContext> unitOfWork) : EntityFrameworkCoreRepository<SolutionNameContext, SystemPermissionEntity, Guid>(unitOfWork), IPermissionRepository
     {
 
     }

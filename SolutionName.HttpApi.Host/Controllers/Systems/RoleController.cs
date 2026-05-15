@@ -5,6 +5,7 @@ using DSB.Framework.Lite.WebApi.Extensions.SwaggerConfig.Attributes;
 using Microsoft.AspNetCore.Mvc;
 using SolutionName.Application.Contracts.Dtos.Systems.Roles;
 using SolutionName.Application.Services.Systems;
+using SolutionName.Domain;
 
 namespace SolutionName.HttpApi.Host.Controllers.Systems
 {
@@ -21,6 +22,7 @@ namespace SolutionName.HttpApi.Host.Controllers.Systems
         /// </summary>
         /// <returns></returns>
         [HttpGet]
+        [IdentifierAuthorize(SolutionNameConsts.PermissionCodes.RoleList)]
         public async Task<ApiResult<List<GetAllRolesOutputDto>>> GetAllRoles()
         {
             return ApiResult<List<GetAllRolesOutputDto>>.GetSuccess(await roleService.GetAllRolesAsync());
@@ -32,6 +34,7 @@ namespace SolutionName.HttpApi.Host.Controllers.Systems
         /// <param name="inputDto"></param>
         /// <returns></returns>
         [HttpPost]
+        [IdentifierAuthorize(SolutionNameConsts.PermissionCodes.RolePage)]
         public async Task<ApiResult<PagedResult<GetPageListOutputDto>>> GetPageList(GetPageListInputDto inputDto)
         {
             return ApiResult<PagedResult<GetPageListOutputDto>>.GetSuccess(await roleService.GetPageListAsync(inputDto));
@@ -43,6 +46,7 @@ namespace SolutionName.HttpApi.Host.Controllers.Systems
         /// <param name="id">角色Id</param>
         /// <returns></returns>
         [HttpGet]
+        [IdentifierAuthorize(SolutionNameConsts.PermissionCodes.RoleDetail)]
         public async Task<ApiResult<GetDetailOutputDto>> GetDetail(Guid id)
         {
             return ApiResult<GetDetailOutputDto>.GetSuccess(await roleService.GetDetailAsync(id));
@@ -54,6 +58,7 @@ namespace SolutionName.HttpApi.Host.Controllers.Systems
         /// <param name="inputDto"></param>
         /// <returns></returns>
         [HttpPost]
+        [IdentifierAuthorize(SolutionNameConsts.PermissionCodes.RoleCreate)]
         public async Task<ApiResult<bool>> Create(CreateInputDto inputDto)
         {
             return ApiResult<bool>.GetSuccess(await roleService.CreateAsync(inputDto, UserContext.Id));
@@ -65,6 +70,7 @@ namespace SolutionName.HttpApi.Host.Controllers.Systems
         /// <param name="inputDto"></param>
         /// <returns></returns>
         [HttpPost]
+        [IdentifierAuthorize(SolutionNameConsts.PermissionCodes.RoleUpdate)]
         public async Task<ApiResult<bool>> Update(UpdateInputDto inputDto)
         {
             return ApiResult<bool>.GetSuccess(await roleService.UpdateAsync(inputDto));
@@ -76,6 +82,7 @@ namespace SolutionName.HttpApi.Host.Controllers.Systems
         /// <param name="id">角色Id</param>
         /// <returns></returns>
         [HttpDelete]
+        [IdentifierAuthorize(SolutionNameConsts.PermissionCodes.RoleDelete)]
         public async Task<ApiResult<bool>> Delete(Guid id)
         {
             return ApiResult<bool>.GetSuccess(await roleService.DeleteAsync(id));
@@ -87,6 +94,7 @@ namespace SolutionName.HttpApi.Host.Controllers.Systems
         /// <param name="inputDto"></param>
         /// <returns></returns>
         [HttpPost]
+        [IdentifierAuthorize(SolutionNameConsts.PermissionCodes.RoleStatus)]
         public async Task<ApiResult<bool>> UpdateStatusAsync(UpdateStatusInputDto inputDto)
         {
             return ApiResult<bool>.GetSuccess(await roleService.UpdateStatusAsync(inputDto));

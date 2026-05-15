@@ -7,7 +7,7 @@ using SolutionName.Application.Contracts.Dtos.Systems.Users;
 using SolutionName.Application.Contracts.UserContext;
 using SolutionName.Domain.Entities.Systems;
 using SolutionName.Domain.Enums;
-using SolutionName.EntityFrameworkCore.Repositories.Systems;
+using SolutionName.EntityFrameworkCore.IRepositories.Systems;
 using System.Linq.Expressions;
 
 namespace SolutionName.Application.Services.Systems
@@ -17,7 +17,7 @@ namespace SolutionName.Application.Services.Systems
     /// </summary>
     public class AuthService(
         IPasswordService passwordService,
-        UserRepository userRepository) : SolutionNameApplicationService
+        IUserRepository userRepository) : SolutionNameApplicationService
     {
         /// <summary>
         /// 登录

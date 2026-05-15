@@ -93,7 +93,7 @@ namespace SolutionName.EntityFrameworkCore
             base.OnConfiguring(optionsBuilder);
 
 #if DEBUG
-            optionsBuilder.LogTo(Console.WriteLine, new[] { Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.CommandExecuting });
+            optionsBuilder.LogTo(Console.WriteLine, new[] { Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.CommandExecuting }).EnableSensitiveDataLogging();
 #endif
         }
     }

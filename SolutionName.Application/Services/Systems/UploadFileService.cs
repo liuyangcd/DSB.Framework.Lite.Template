@@ -5,7 +5,7 @@ using SolutionName.Application.Contracts.Bos.Systems.UploadFIles;
 using SolutionName.Application.Contracts.Dtos.Systems.UploadFIles;
 using SolutionName.Domain.Entities.Systems;
 using SolutionName.Domain.Options;
-using SolutionName.EntityFrameworkCore.Repositories.Systems;
+using SolutionName.EntityFrameworkCore.IRepositories.Systems;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +19,7 @@ namespace SolutionName.Application.Services.Systems
     /// 上传文件管理服务
     /// </summary>
     public class UploadFileService(
-        UploadFileRepository uploadFileRepository,
+        IUploadFileRepository uploadFileRepository,
         IGuidGenerator guidGenerator,
         IOptions<FileUploadOptions> fileUploadOptions) : SolutionNameApplicationService
     {

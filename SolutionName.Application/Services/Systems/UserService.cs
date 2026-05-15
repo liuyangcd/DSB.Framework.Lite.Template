@@ -7,7 +7,7 @@ using SolutionName.Application.Contracts.Bos.Systems.Users;
 using SolutionName.Application.Contracts.Dtos.Systems.Users;
 using SolutionName.Domain.Entities.Systems;
 using SolutionName.Domain.Enums;
-using SolutionName.EntityFrameworkCore.Repositories.Systems;
+using SolutionName.EntityFrameworkCore.IRepositories.Systems;
 using System.Linq.Expressions;
 
 namespace SolutionName.Application.Services.Systems
@@ -19,7 +19,7 @@ namespace SolutionName.Application.Services.Systems
         ILogger<UserService> logger,
         IGuidGenerator guidGenerator,
         IPasswordService passwordService,
-        UserRepository userRepository) : SolutionNameApplicationService
+        IUserRepository userRepository) : SolutionNameApplicationService
     {
 
         #region 用户管理

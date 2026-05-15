@@ -4,6 +4,7 @@ using DSB.Framework.Lite.Data.EFCore.Repository;
 using Microsoft.EntityFrameworkCore;
 using SolutionName.Domain.Entities.Systems;
 using SolutionName.Domain.Enums;
+using SolutionName.EntityFrameworkCore.IRepositories.Systems;
 using System.Linq.Expressions;
 
 namespace SolutionName.EntityFrameworkCore.Repositories.Systems
@@ -14,10 +15,10 @@ namespace SolutionName.EntityFrameworkCore.Repositories.Systems
     public class UserRepository(
         IUnitOfWork<SolutionNameContext> unitOfWork,
         IGuidGenerator guidGenerator,
-        RoleRepository roleRepository,
+        IRoleRepository roleRepository,
         IEntityFrameworkCoreRepository<SolutionNameContext, SystemUserRoleEntity, Guid> userRoleRepository,
         IEntityFrameworkCoreRepository<SolutionNameContext, SystemRolePermissionEntity, Guid> rolePermissionRepository,
-        PermissionRepository permissionRepository) : EntityFrameworkCoreRepository<SolutionNameContext, SystemUserEntity, Guid>(unitOfWork)
+        IPermissionRepository permissionRepository) : EntityFrameworkCoreRepository<SolutionNameContext, SystemUserEntity, Guid>(unitOfWork), IUserRepository
     {
 
         /// <summary>
