@@ -151,7 +151,13 @@ namespace SolutionName.Domain
             /// 文件管理
             /// </summary>
             public const string SystemFile = "system:file";
+        }
 
+        /// <summary>
+        /// 角色编码常量
+        /// </summary>
+        public static class RoleCodes
+        {
             /// <summary>
             /// 管理员角色编码
             /// </summary>
