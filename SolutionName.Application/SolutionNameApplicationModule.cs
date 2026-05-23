@@ -75,7 +75,7 @@ namespace SolutionName.Application
         public static void UseHangfireBackgroundJobs(this IServiceProvider serviceProvider)
         {
             var recurringJobManager = serviceProvider.GetRequiredService<IRecurringJobManager>();
-            recurringJobManager.AddOrUpdate<CycleJob>(nameof(CycleJob), job => job.ExecuteAsync(), Cron.Minutely);
+            // recurringJobManager.AddOrUpdate<CycleJob>(nameof(CycleJob), job => job.ExecuteAsync(), Cron.Minutely);
         }
     }
 }

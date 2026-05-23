@@ -8,7 +8,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="DSB.Framework.Lite.Core" Version="1.0.12" />
+		<PackageReference Include="DSB.Framework.Lite.Core" Version="1.0.13" />
 		<PackageReference Include="DSB.Framework.Lite.Data.EFCore.Extensions" Version="1.0.5" />
 		<PackageReference Include="DSB.Framework.Lite.Data.EFCore.Repository" Version="1.0.15" />
 	</ItemGroup>
