@@ -93,32 +93,33 @@ namespace SolutionName.EntityFrameworkCore.Repositories.Systems
             {
                 roleIds = [.. roleIds!.Distinct()];
                 var oldUserRoles = await GetUserRoleListAsync(userId);
-                if (roleIds.IsNullOrEmpty())
+                var deleteUserRoles = oldUserRoles.Where(x => !roleIds.Contains(x.RoleId)).ToList();
+                if (deleteUserRoles.Count > 0)
                 {
-                    if (oldUserRoles.Count > 0)
-                    {
-                        await userRoleRepository.DeprecateRangeAsync(oldUserRoles);
-                    }
-                }
-                else
-                {
-                    var deleteUserRoles = oldUserRoles.Where(x => !roleIds.Contains(x.RoleId)).ToList();
                     await userRoleRepository.DeprecateRangeAsync(deleteUserRoles);
+                }
 
-                    var insertRoleIds = roleIds.Except(oldUserRoles.Select(x => x.RoleId)).ToList();
-                    if (insertRoleIds.Count > 0)
+                var insertRoleIds = roleIds.Except(oldUserRoles.Select(x => x.RoleId)).ToList();
+                if (insertRoleIds.Count > 0)
+                {
+                    if (await roleRepository.CountAsync(x => insertRoleIds.Contains(x.Id)) != insertRoleIds.Count) throw new BusinessException("角色信息异常");
+
+                    var userRoleList = insertRoleIds.Select(roleId => new SystemUserRoleEntity
                     {
-                        if (await roleRepository.CountAsync(x => insertRoleIds.Contains(x.Id)) != insertRoleIds.Count) throw new BusinessException("角色信息异常");
+                        Id = guidGenerator.Create(),
+                        UserId = userId,
+                        RoleId = roleId
+                    }).ToList();
 
-                        var userRoleList = insertRoleIds.Select(roleId => new SystemUserRoleEntity
-                        {
-                            Id = guidGenerator.Create(),
-                            UserId = userId,
-                            RoleId = roleId
-                        }).ToList();
-
-                        await userRoleRepository.InsertRangeAsync(userRoleList);
-                    }
+                    await userRoleRepository.InsertRangeAsync(userRoleList);
+                }
+            }
+            else
+            {
+                var oldUserRoles = await GetUserRoleListAsync(userId);
+                if (oldUserRoles.Count > 0)
+                {
+                    await userRoleRepository.DeprecateRangeAsync(oldUserRoles);
                 }
             }
         }
