@@ -77,32 +77,34 @@ namespace SolutionName.EntityFrameworkCore.Repositories.Systems
             {
                 permissionIds = [.. permissionIds!.Distinct()];
                 var oldRolePermissions = await GetRolePermissionListAsync(roleId);
-                if (permissionIds.IsNullOrEmpty())
+
+                var deleteRolePermissions = oldRolePermissions.Where(x => !permissionIds.Contains(x.PermissionId)).ToList();
+                if (deleteRolePermissions.Count > 0)
                 {
-                    if (oldRolePermissions.Count > 0)
-                    {
-                        await rolePermissionRepository.DeprecateRangeAsync(oldRolePermissions);
-                    }
-                }
-                else
-                {
-                    var deleteRolePermissions = oldRolePermissions.Where(x => !permissionIds.Contains(x.PermissionId)).ToList();
                     await rolePermissionRepository.DeprecateRangeAsync(deleteRolePermissions);
+                }
 
-                    var insertPermissionIds = permissionIds.Except(oldRolePermissions.Select(x => x.PermissionId)).ToList();
-                    if (insertPermissionIds.Count > 0)
+                var insertPermissionIds = permissionIds.Except(oldRolePermissions.Select(x => x.PermissionId)).ToList();
+                if (insertPermissionIds.Count > 0)
+                {
+                    if (await permissionRepository.CountAsync(x => insertPermissionIds.Contains(x.Id)) != insertPermissionIds.Count) throw new BusinessException("权限信息异常");
+
+                    var rolePermissionList = insertPermissionIds.Select(permissionId => new SystemRolePermissionEntity
                     {
-                        if (await permissionRepository.CountAsync(x => insertPermissionIds.Contains(x.Id)) != insertPermissionIds.Count) throw new BusinessException("权限信息异常");
+                        Id = guidGenerator.Create(),
+                        PermissionId = permissionId,
+                        RoleId = roleId
+                    }).ToList();
 
-                        var rolePermissionList = insertPermissionIds.Select(permissionId => new SystemRolePermissionEntity
-                        {
-                            Id = guidGenerator.Create(),
-                            PermissionId = permissionId,
-                            RoleId = roleId
-                        }).ToList();
-
-                        await rolePermissionRepository.InsertRangeAsync(rolePermissionList);
-                    }
+                    await rolePermissionRepository.InsertRangeAsync(rolePermissionList);
+                }
+            }
+            else
+            {
+                var oldRolePermissions = await GetRolePermissionListAsync(roleId);
+                if (oldRolePermissions.Count > 0)
+                {
+                    await rolePermissionRepository.DeprecateRangeAsync(oldRolePermissions);
                 }
             }
         }
