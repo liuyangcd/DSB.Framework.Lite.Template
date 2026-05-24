@@ -2,6 +2,7 @@
 using DSB.Framework.Lite.Data.EFCore.Extensions.Setting;
 using DSB.Framework.Lite.Data.EFCore.Repository;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace SolutionName.EntityFrameworkCore
 {
@@ -19,7 +20,12 @@ namespace SolutionName.EntityFrameworkCore
         {
             #region EntityFrameworkCore数据库
 
-            services.AddEntityFrameworkCoreDbContext<SolutionNameContext>(efDbContextOptions);
+            services.AddEntityFrameworkCoreDbContext<SolutionNameContext>(efDbContextOptions, 1024, true, optionsBuilder =>
+            {
+#if DEBUG
+                optionsBuilder.LogTo(Console.WriteLine, new[] { Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.CommandExecuting }).EnableSensitiveDataLogging();
+#endif
+            });
             services.AddGuidGenerator(efDbContextOptions.DbType);
             services.AddEntityFrameworkCoreRepository(typeof(SolutionNameContext));
 

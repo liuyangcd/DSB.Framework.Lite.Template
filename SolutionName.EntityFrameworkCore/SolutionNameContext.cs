@@ -84,17 +84,5 @@ namespace SolutionName.EntityFrameworkCore
         }
         #endregion
 
-        /// <summary>
-        /// 数据库配置
-        /// </summary>
-        /// <param name="optionsBuilder"></param>
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            base.OnConfiguring(optionsBuilder);
-
-#if DEBUG
-            optionsBuilder.LogTo(Console.WriteLine, new[] { Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.CommandExecuting }).EnableSensitiveDataLogging();
-#endif
-        }
     }
 }
