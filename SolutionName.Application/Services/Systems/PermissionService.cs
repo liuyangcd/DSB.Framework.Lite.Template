@@ -116,7 +116,7 @@ namespace SolutionName.Application.Services.Systems
         /// <returns></returns>
         public async Task<bool> UpdateAsync(UpdateInputDto inputDto)
         {
-            var permission = await permissionRepository.GetSingleAsync(inputDto.Id) ?? throw new BusinessException("权限不存在");
+            var permission = await permissionRepository.GetSingleAsync(inputDto.Id, false) ?? throw new BusinessException("权限不存在");
 
             if (await permissionRepository.IsExistsAsync(x => x.Code == inputDto.Code && x.Id != inputDto.Id)) throw new BusinessException("编码已存在");
 

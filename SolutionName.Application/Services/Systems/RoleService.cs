@@ -101,7 +101,7 @@ namespace SolutionName.Application.Services.Systems
         /// <exception cref="BusinessException"></exception>
         public async Task<bool> UpdateAsync(UpdateInputDto inputDto)
         {
-            var role = await roleRepository.GetSingleAsync(inputDto.Id) ?? throw new BusinessException("角色不存在");
+            var role = await roleRepository.GetSingleAsync(inputDto.Id, false) ?? throw new BusinessException("角色不存在");
 
             if (await roleRepository.IsExistsAsync(x => x.Code == inputDto.Code && x.Id != inputDto.Id)) throw new BusinessException("编码已存在");
 

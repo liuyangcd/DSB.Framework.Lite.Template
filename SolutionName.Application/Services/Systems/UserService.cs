@@ -95,7 +95,7 @@ namespace SolutionName.Application.Services.Systems
         /// <exception cref="BusinessException"></exception>
         public async Task<bool> UpdateAsync(UpdateInputDto inputDto)
         {
-            var user = await userRepository.GetSingleAsync(inputDto.Id) ?? throw new BusinessException("用户不存在");
+            var user = await userRepository.GetSingleAsync(inputDto.Id, false) ?? throw new BusinessException("用户不存在");
 
             // 自动映射更新属性，需要属性名称和类型一致
             inputDto.TransObject(user);
