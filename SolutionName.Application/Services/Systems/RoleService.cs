@@ -102,7 +102,7 @@ namespace SolutionName.Application.Services.Systems
         public async Task<bool> UpdateAsync(UpdateInputDto inputDto)
         {
             // 当确认查询实体后需要进行数据库修改操作，保证修改生成SQL语句的洁净度（只发送修改了值的字段），此处查询采用跟踪查询
-            var role = await roleRepository.GetSingleAsync(inputDto.Id, false) ?? throw new BusinessException("角色不存在");
+            var role = await roleRepository.GetSingleAsync(inputDto.Id, true) ?? throw new BusinessException("角色不存在");
 
             if (await roleRepository.IsExistsAsync(x => x.Code == inputDto.Code && x.Id != inputDto.Id)) throw new BusinessException("编码已存在");
 

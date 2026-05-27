@@ -96,7 +96,7 @@ namespace SolutionName.Application.Services.Systems
         public async Task<bool> UpdateAsync(UpdateInputDto inputDto)
         {
             // 当确认查询实体后需要进行数据库修改操作，保证修改生成SQL语句的洁净度（只发送修改了值的字段），此处查询采用跟踪查询
-            var user = await userRepository.GetSingleAsync(inputDto.Id, false) ?? throw new BusinessException("用户不存在");
+            var user = await userRepository.GetSingleAsync(inputDto.Id, true) ?? throw new BusinessException("用户不存在");
 
             // 自动映射更新属性，需要属性名称和类型一致
             inputDto.TransObject(user);

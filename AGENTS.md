@@ -228,12 +228,12 @@ Other direct-execute methods:
 
 ### Priority 2: Tracking query — when entity data is needed for business logic
 
-When business logic **requires** reading the entity first (validation, conditional updates, multi-field mapping), use a **tracking query** by passing `isNoTracking = false`. This lets EF Core's change tracker detect only the modified properties, so the generated UPDATE SQL includes **only the changed columns** — not the entire row.
+When business logic **requires** reading the entity first (validation, conditional updates, multi-field mapping), use a **tracking query** by passing `isTracking = true`. This lets EF Core's change tracker detect only the modified properties, so the generated UPDATE SQL includes **only the changed columns** — not the entire row.
 
 ```csharp
 // UpdateAsync in UserService.cs:99
 // Need to validate user exists + conditionally update password
-var user = await userRepository.GetSingleAsync(inputDto.Id, false)
+var user = await userRepository.GetSingleAsync(inputDto.Id, true)
     ?? throw new BusinessException("用户不存在");
 
 // TransObject only maps DTO properties that differ from entity values
@@ -251,14 +251,14 @@ await userRepository.UpdateAsync(user);
 // Only modified columns appear — NOT a full-table UPDATE
 ```
 
-**Key point**: Repository query methods have an `isNoTracking` overload parameter. Use `false` when you intend to modify the returned entity; use `true` (the default) for read-only queries to avoid change tracker overhead.
+**Key point**: Repository query methods have an `isTracking` overload parameter. Use `true` when you intend to modify the returned entity; use `false` (the default) for read-only queries to avoid change tracker overhead.
 
 ```csharp
 // Read-only query — no tracking (default behavior)
-var user = await userRepository.GetSingleAsync(id);                 // isNoTracking = true
+var user = await userRepository.GetSingleAsync(id);                 // isTracking = false
 
 // Query for update — tracking enabled
-var user = await userRepository.GetSingleAsync(id, false);         // isNoTracking = false
+var user = await userRepository.GetSingleAsync(id, true);          // isTracking = true
 ```
 
 ## Code Style
