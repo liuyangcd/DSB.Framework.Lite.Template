@@ -51,7 +51,7 @@ namespace SolutionName.EntityFrameworkCore
 
         #region 模型约束配置
         /// <summary>
-        /// 
+        /// 模型约束配置
         /// </summary>
         /// <param name="modelBuilder"></param>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -70,14 +70,14 @@ namespace SolutionName.EntityFrameworkCore
             modelBuilder.Entity<SystemUserEntity>().HasIndex(u => u.Account).IsUnique();
 
             modelBuilder.Entity<SystemRoleEntity>().HasIndex(r => r.Code).IsUnique();
+            modelBuilder.Entity<SystemRoleEntity>().HasIndex(r => new { r.Sort, r.CreateDateAt }).IsDescending(false, true);
 
             modelBuilder.Entity<SystemPermissionEntity>().HasIndex(p => p.Code).IsUnique();
+            modelBuilder.Entity<SystemPermissionEntity>().HasIndex(p => new { p.Sort, p.CreateDateAt }).IsDescending(false, true);
 
-            modelBuilder.Entity<SystemUserRoleEntity>().HasIndex(ur => ur.UserId);
             modelBuilder.Entity<SystemUserRoleEntity>().HasIndex(ur => ur.RoleId);
             modelBuilder.Entity<SystemUserRoleEntity>().HasIndex(ur => new { ur.UserId, ur.RoleId }).IsUnique();
 
-            modelBuilder.Entity<SystemRolePermissionEntity>().HasIndex(ur => ur.RoleId);
             modelBuilder.Entity<SystemRolePermissionEntity>().HasIndex(ur => ur.PermissionId);
             modelBuilder.Entity<SystemRolePermissionEntity>().HasIndex(ur => new { ur.RoleId, ur.PermissionId }).IsUnique();
             #endregion

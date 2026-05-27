@@ -31,7 +31,10 @@ namespace SolutionName.Application.Services.Systems
         public async Task<List<GetAllRolesOutputDto>> GetAllRolesAsync()
         {
             return await roleRepository.GetListAsync(x => x.Status == RecordStatus.Normally,
-                                                     [new SortSpecAsc<SystemRoleEntity>(x => x.Sort)],
+                                                     [
+                                                         new SortSpecAsc<SystemRoleEntity>(x => x.Sort),
+                                                         new SortSpecDesc<SystemRoleEntity>(x => x.CreateDateAt)
+                                                     ],
                                                      ExpressionGenericMapper<SystemRoleEntity, GetAllRolesOutputDto>.Selector);
         }
 

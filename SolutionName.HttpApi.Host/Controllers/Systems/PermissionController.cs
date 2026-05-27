@@ -19,16 +19,16 @@ namespace SolutionName.HttpApi.Host.Controllers.Systems
         PermissionService permissionService) : ManagerControllerBase(jwtService)
     {
         /// <summary>
-        /// 获取全部权限列表，获取待选择列表status=1即可
+        /// 获取全部权限列表
         /// </summary>
         /// <param name="name">名称</param>
         /// <param name="code">编码</param>
         /// <param name="type">类型</param>
-        /// <param name="status">状态</param>
+        /// <param name="status">状态:1表示可用的权限</param>
         /// <returns></returns>
         [HttpGet]
         [IdentifierAuthorize(SolutionNameConsts.PermissionCodes.PermissionList)]
-        public async Task<ApiResult<List<GetAllListOutputDto>>> GetAllList(string name, string code, PermissionType? type, RecordStatus? status)
+        public async Task<ApiResult<List<GetAllListOutputDto>>> GetAllList(string? name, string? code, PermissionType? type, RecordStatus? status)
         {
             return ApiResult<List<GetAllListOutputDto>>.GetSuccess(await permissionService.GetAllListAsync(name, code, type, status));
         }

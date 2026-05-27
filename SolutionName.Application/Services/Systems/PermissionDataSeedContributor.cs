@@ -1,7 +1,9 @@
 using DSB.Framework.Lite.Data.EFCore.Extensions.SequentialGuid;
+using DSB.Framework.Lite.Data.EFCore.Repository;
 using SolutionName.Domain;
 using SolutionName.Domain.Entities.Systems;
 using SolutionName.Domain.Enums.Systems;
+using SolutionName.EntityFrameworkCore;
 using SolutionName.EntityFrameworkCore.IRepositories.Systems;
 
 namespace SolutionName.Application.Services.Systems
@@ -11,7 +13,8 @@ namespace SolutionName.Application.Services.Systems
     /// </summary>
     public class PermissionDataSeedContributor(
         IPermissionRepository permissionRepository,
-        IGuidGenerator guidGenerator) : IDataSeedContributor
+        IGuidGenerator guidGenerator,
+        IUnitOfWork<SolutionNameContext> unitOfWork) : IDataSeedContributor
     {
         /// <summary>
         /// 执行种子数据初始化（幂等）
@@ -42,6 +45,8 @@ namespace SolutionName.Application.Services.Systems
                     ParentId = parentId,
                     Sort = sort
                 });
+
+                await unitOfWork.SaveChangesAsync();
             }
         }
 
@@ -49,7 +54,7 @@ namespace SolutionName.Application.Services.Systems
         {
             return
             [
-                (SolutionNameConsts.PermissionGroups.System, "系统管理", PermissionType.Directory, null, 0),
+                (SolutionNameConsts.PermissionGroups.System, "系统管理", PermissionType.Directory, null, 1),
 
                 (SolutionNameConsts.PermissionGroups.SystemUser, "用户管理", PermissionType.Menu, SolutionNameConsts.PermissionGroups.System, 1),
                 (SolutionNameConsts.PermissionCodes.UserPage, "分页查询", PermissionType.Api, SolutionNameConsts.PermissionGroups.SystemUser, 1),

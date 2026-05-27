@@ -169,14 +169,15 @@ namespace SolutionName.EntityFrameworkCore.DbMigrations.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_SystemPermissions_Sort_CreateDateAt",
+                table: "SystemPermissions",
+                columns: new[] { "Sort", "CreateDateAt" },
+                descending: new[] { false, true });
+
+            migrationBuilder.CreateIndex(
                 name: "IX_SystemRolePermissions_PermissionId",
                 table: "SystemRolePermissions",
                 column: "PermissionId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_SystemRolePermissions_RoleId",
-                table: "SystemRolePermissions",
-                column: "RoleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SystemRolePermissions_RoleId_PermissionId",
@@ -191,14 +192,15 @@ namespace SolutionName.EntityFrameworkCore.DbMigrations.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_SystemRoles_Sort_CreateDateAt",
+                table: "SystemRoles",
+                columns: new[] { "Sort", "CreateDateAt" },
+                descending: new[] { false, true });
+
+            migrationBuilder.CreateIndex(
                 name: "IX_SystemUserRoles_RoleId",
                 table: "SystemUserRoles",
                 column: "RoleId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_SystemUserRoles_UserId",
-                table: "SystemUserRoles",
-                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SystemUserRoles_UserId_RoleId",

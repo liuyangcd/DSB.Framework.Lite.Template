@@ -33,6 +33,7 @@ namespace SolutionName.EntityFrameworkCore.Repositories.Systems
             var query = from userRole in userRoleRepository.Queryable
                         join role in roleRepository.Queryable on userRole.RoleId equals role.Id
                         where userRole.UserId == userId && role.Status == RecordStatus.Normally
+                        orderby role.Sort, role.CreateDateAt descending
                         select userRole;
             var result = await query.Select(selector).ToListAsync();
             return result;
@@ -48,6 +49,7 @@ namespace SolutionName.EntityFrameworkCore.Repositories.Systems
             var query = from userRole in userRoleRepository.Queryable
                         join role in roleRepository.Queryable on userRole.RoleId equals role.Id
                         where userRole.UserId == userId && role.Status == RecordStatus.Normally
+                        orderby role.Sort, role.CreateDateAt descending
                         select userRole;
             var result = await query.ToListAsync();
             return result;
@@ -136,6 +138,7 @@ namespace SolutionName.EntityFrameworkCore.Repositories.Systems
                         join rolePermission in rolePermissionRepository.Queryable on role.Id equals rolePermission.RoleId
                         join permission in permissionRepository.Queryable on rolePermission.PermissionId equals permission.Id
                         where userRole.UserId == userId && role.Status == RecordStatus.Normally && permission.Status == RecordStatus.Normally
+                        orderby role.Sort, role.CreateDateAt descending, permission.Sort, permission.CreateDateAt descending
                         select permission.Code;
             var result = await query.Distinct().ToListAsync();
             return result;

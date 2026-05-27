@@ -16,7 +16,6 @@ namespace SolutionName.Application.Services.Systems
     /// 用户服务
     /// </summary>
     public class UserService(
-        ILogger<UserService> logger,
         IGuidGenerator guidGenerator,
         IPasswordService passwordService,
         IUserRepository userRepository) : SolutionNameApplicationService

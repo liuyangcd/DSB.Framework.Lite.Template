@@ -4,7 +4,6 @@ using DSB.Framework.Lite.Data.EFCore.Repository;
 using SolutionName.Domain;
 using SolutionName.Domain.Entities.Systems;
 using SolutionName.Domain.Enums;
-using SolutionName.Domain.Enums.Systems;
 using SolutionName.EntityFrameworkCore;
 using SolutionName.EntityFrameworkCore.IRepositories.Systems;
 
@@ -32,9 +31,12 @@ namespace SolutionName.Application.Services.Systems
 
             var adminRole = await EnsureAdminRoleAsync(allPermissionIds);
             await unitOfWork.SaveChangesAsync();
+
             var adminUser = await EnsureAdminUserAsync();
             await unitOfWork.SaveChangesAsync();
+
             await EnsureAdminUserRoleAsync(adminUser.Id, adminRole.Id);
+            await unitOfWork.SaveChangesAsync();
         }
 
         /// <summary>

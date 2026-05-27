@@ -17,7 +17,7 @@ namespace SolutionName.EntityFrameworkCore.DbMigrations.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.22")
+                .HasAnnotation("ProductVersion", "8.0.26")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
@@ -76,6 +76,9 @@ namespace SolutionName.EntityFrameworkCore.DbMigrations.Migrations
                     b.HasIndex("Code")
                         .IsUnique();
 
+                    b.HasIndex("Sort", "CreateDateAt")
+                        .IsDescending(false, true);
+
                     b.ToTable("SystemPermissions");
                 });
 
@@ -122,6 +125,9 @@ namespace SolutionName.EntityFrameworkCore.DbMigrations.Migrations
                     b.HasIndex("Code")
                         .IsUnique();
 
+                    b.HasIndex("Sort", "CreateDateAt")
+                        .IsDescending(false, true);
+
                     b.ToTable("SystemRoles");
                 });
 
@@ -149,8 +155,6 @@ namespace SolutionName.EntityFrameworkCore.DbMigrations.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("PermissionId");
-
-                    b.HasIndex("RoleId");
 
                     b.HasIndex("RoleId", "PermissionId")
                         .IsUnique();
@@ -302,8 +306,6 @@ namespace SolutionName.EntityFrameworkCore.DbMigrations.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("RoleId");
-
-                    b.HasIndex("UserId");
 
                     b.HasIndex("UserId", "RoleId")
                         .IsUnique();

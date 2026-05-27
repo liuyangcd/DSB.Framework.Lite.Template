@@ -31,7 +31,7 @@ namespace SolutionName.Application.Services.Systems
         /// <param name="type">类型</param>
         /// <param name="status">状态</param>
         /// <returns></returns>
-        public async Task<List<GetAllListOutputDto>> GetAllListAsync(string name, string code, PermissionType? type, RecordStatus? status)
+        public async Task<List<GetAllListOutputDto>> GetAllListAsync(string? name, string? code, PermissionType? type, RecordStatus? status)
         {
             Expression<Func<SystemPermissionEntity, bool>> predicate = p => true;
             predicate = predicate.AndIf(name.IsNotNullOrEmpty(), p => p.Name.Contains(name))
@@ -40,7 +40,10 @@ namespace SolutionName.Application.Services.Systems
                 .AndIf(status.HasValue, p => p.Status == status!.Value);
 
             var permissions = await permissionRepository.GetListAsync(predicate,
-                [new SortSpecAsc<SystemPermissionEntity>(p => p.Sort)],
+                [
+                    new SortSpecAsc<SystemPermissionEntity>(p => p.Sort),
+                    new SortSpecDesc<SystemPermissionEntity>(p => p.CreateDateAt)
+                ],
                 ExpressionGenericMapper<SystemPermissionEntity, GetAllListOutputDto>.Selector);
 
             #region 组装数据结构

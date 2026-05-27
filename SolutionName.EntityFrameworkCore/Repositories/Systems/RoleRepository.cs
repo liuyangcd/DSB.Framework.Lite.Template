@@ -58,6 +58,7 @@ namespace SolutionName.EntityFrameworkCore.Repositories.Systems
             var query = from rolePermission in rolePermissionRepository.Queryable
                         join permission in permissionRepository.Queryable on rolePermission.PermissionId equals permission.Id
                         where rolePermission.RoleId == roleId && permission.Status == RecordStatus.Normally
+                        orderby permission.Sort, permission.CreateDateAt descending
                         select rolePermission;
             var result = await query.ToListAsync();
             return result;
