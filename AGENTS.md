@@ -206,6 +206,61 @@ Example of generic-only usage (no custom interface needed):
 private readonly IEntityFrameworkCoreRepository<SolutionNameContext, SystemUserRoleEntity, Guid> userRoleRepository;
 ```
 
+## Entity Update Strategy — Tracking Query vs. Execute Methods
+
+When performing database updates, follow this priority order:
+
+### Priority 1 (Preferred): Execute direct update — no entity query
+
+When business logic does **not** need to inspect entity data before updating, use `ExecuteUpdateAsync` to issue a direct SQL UPDATE. No entity is loaded into memory, no change tracker is involved, and only the target columns are modified.
+
+```csharp
+// UpdateStatusAsync in UserService.cs:140
+// No entity query needed — just flip a status field
+return await userRepository.ExecuteUpdateAsync(
+    inputDto.Id,
+    x => x.SetProperty(y => y.Status, inputDto.Status));
+```
+
+Other direct-execute methods:
+- `ExecuteDeleteAsync(id|ids|whereExpression)` — immediate physical delete
+- `ExecuteDeprecateAsync(id|ids|whereExpression)` — immediate logical delete
+
+### Priority 2: Tracking query — when entity data is needed for business logic
+
+When business logic **requires** reading the entity first (validation, conditional updates, multi-field mapping), use a **tracking query** by passing `isNoTracking = false`. This lets EF Core's change tracker detect only the modified properties, so the generated UPDATE SQL includes **only the changed columns** — not the entire row.
+
+```csharp
+// UpdateAsync in UserService.cs:99
+// Need to validate user exists + conditionally update password
+var user = await userRepository.GetSingleAsync(inputDto.Id, false)
+    ?? throw new BusinessException("用户不存在");
+
+// TransObject only maps DTO properties that differ from entity values
+inputDto.TransObject(user);
+
+if (inputDto.PasswordText.IsNotNullOrEmpty())
+{
+    var (hashedPassword, salt) = passwordService.CreatePasswordHash(inputDto.PasswordText);
+    user.Password = hashedPassword;
+    user.Salt = salt;
+}
+
+await userRepository.UpdateAsync(user);
+// Generated SQL: UPDATE ... SET Name=@p0, Phone=@p1, Password=@p2, Salt=@p3 WHERE Id=@p4
+// Only modified columns appear — NOT a full-table UPDATE
+```
+
+**Key point**: Repository query methods have an `isNoTracking` overload parameter. Use `false` when you intend to modify the returned entity; use `true` (the default) for read-only queries to avoid change tracker overhead.
+
+```csharp
+// Read-only query — no tracking (default behavior)
+var user = await userRepository.GetSingleAsync(id);                 // isNoTracking = true
+
+// Query for update — tracking enabled
+var user = await userRepository.GetSingleAsync(id, false);         // isNoTracking = false
+```
+
 ## Code Style
 
 - All public types and members have XML doc comments (`<summary>`)

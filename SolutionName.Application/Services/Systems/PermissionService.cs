@@ -116,10 +116,12 @@ namespace SolutionName.Application.Services.Systems
         /// <returns></returns>
         public async Task<bool> UpdateAsync(UpdateInputDto inputDto)
         {
+            // 当确认查询实体后需要进行数据库修改操作，保证修改生成SQL语句的洁净度（只发送修改了值的字段），此处查询采用跟踪查询
             var permission = await permissionRepository.GetSingleAsync(inputDto.Id, false) ?? throw new BusinessException("权限不存在");
 
             if (await permissionRepository.IsExistsAsync(x => x.Code == inputDto.Code && x.Id != inputDto.Id)) throw new BusinessException("编码已存在");
 
+            // 自动映射更新属性，需要属性名称和类型一致
             inputDto.TransObject(permission);
 
             await permissionRepository.UpdateAsync(permission);
