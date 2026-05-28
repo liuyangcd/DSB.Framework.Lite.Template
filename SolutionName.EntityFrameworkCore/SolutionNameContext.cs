@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DSB.Framework.Lite.Data.EFCore.Repository;
+using Microsoft.EntityFrameworkCore;
 using SolutionName.Domain.Entities.Systems;
 using SolutionName.Domain.Enums;
 using System;
@@ -56,6 +57,12 @@ namespace SolutionName.EntityFrameworkCore
         /// <param name="modelBuilder"></param>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
+            #region 配置逻辑删除全局查询过滤器
+            modelBuilder.ApplyDeprecateQueryFilter();
+            #endregion
+
             #region 配置默认值
             /*
              * 取消设置默认值，改为在实体类中设置默认值，是因为有哨兵值问题。

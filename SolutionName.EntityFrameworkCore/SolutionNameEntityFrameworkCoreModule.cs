@@ -20,8 +20,8 @@ namespace SolutionName.EntityFrameworkCore
         {
             #region EntityFrameworkCore数据库
 
-            // 注册EF Core数据库上下文，并配置相关选项：采用池化注册1024个上下文实例，配置全局无跟踪查询模式，并在调试模式下输出SQL日志和启用敏感数据日志记录
-            services.AddEntityFrameworkCoreDbContext<SolutionNameContext>(efDbContextOptions, 1024, false, optionsBuilder =>
+            // 注册EF Core数据库上下文，并配置相关选项：配置全局无跟踪查询模式，并在调试模式下输出SQL日志和启用敏感数据日志记录
+            services.AddEntityFrameworkCoreDbContext<SolutionNameContext>(efDbContextOptions, false, optionsBuilder =>
             {
 #if DEBUG
                 optionsBuilder.LogTo(Console.WriteLine, [RelationalEventId.CommandExecuting]).EnableSensitiveDataLogging();

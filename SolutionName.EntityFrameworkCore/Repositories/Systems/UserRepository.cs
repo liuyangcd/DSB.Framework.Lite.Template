@@ -138,8 +138,9 @@ namespace SolutionName.EntityFrameworkCore.Repositories.Systems
                         join rolePermission in rolePermissionRepository.Queryable on role.Id equals rolePermission.RoleId
                         join permission in permissionRepository.Queryable on rolePermission.PermissionId equals permission.Id
                         where userRole.UserId == userId && role.Status == RecordStatus.Normally && permission.Status == RecordStatus.Normally
-                        orderby role.Sort, role.CreateDateAt descending, permission.Sort, permission.CreateDateAt descending
                         select permission.Code;
+
+            // 注意：Distinct操作会导致表达式中排序失效，所以上述查询不需要指定order by语句
             var result = await query.Distinct().ToListAsync();
             return result;
         }
