@@ -69,14 +69,13 @@ namespace SolutionName.HttpApi.Host
             #region 配置WebApi
 
             builder.Services.AddHealthChecks();
-            builder.Services.AddControllers(option =>
-            {
-                option.Filters.Add<ApiResultFilter>();
-            }).AddJsonOptions(options =>
+            builder.Services.AddControllers().AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.Converters.Add(new DateTimeToJsonConverter());
                 options.JsonSerializerOptions.Converters.Add(new DateTimeOffsetToJsonConverter());
             });
+            builder.Services.AddRequestLogFilter();
+            builder.Services.AddApiResultFilter();
 
             #endregion
 
@@ -200,9 +199,6 @@ namespace SolutionName.HttpApi.Host
 
             // 应用跨域默认策略
             app.UseCors();
-
-            // 注意请求日志中间件和全局异常捕获中间件的注册顺序，一定是先注册日志记录再注册全局异常，才能保证到达日志记录层时没有异常。
-            // app.UseRequestLogMiddleware();
 
             // 注意添加全局异常捕获，可以屏蔽UseDeveloperExceptionPage
             app.UseGlobalExceptionMiddleware();
