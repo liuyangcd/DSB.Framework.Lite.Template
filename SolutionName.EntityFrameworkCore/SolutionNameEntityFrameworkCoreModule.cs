@@ -3,6 +3,7 @@ using DSB.Framework.Lite.Data.EFCore.Extensions.Setting;
 using DSB.Framework.Lite.Data.EFCore.Repository;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace SolutionName.EntityFrameworkCore
 {
@@ -24,7 +25,7 @@ namespace SolutionName.EntityFrameworkCore
             services.AddEntityFrameworkCoreDbContext<SolutionNameContext>(efDbContextOptions, false, optionsBuilder =>
             {
 #if DEBUG
-                optionsBuilder.LogTo(Console.WriteLine, [RelationalEventId.CommandExecuting])
+                optionsBuilder.LogTo(Console.WriteLine, [RelationalEventId.CommandExecuted], LogLevel.Information)
                 .EnableSensitiveDataLogging()
                 .EnableDetailedErrors();
 #endif
