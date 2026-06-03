@@ -24,7 +24,9 @@ namespace SolutionName.EntityFrameworkCore
             services.AddEntityFrameworkCoreDbContext<SolutionNameContext>(efDbContextOptions, false, optionsBuilder =>
             {
 #if DEBUG
-                optionsBuilder.LogTo(Console.WriteLine, [RelationalEventId.CommandExecuting]).EnableSensitiveDataLogging();
+                optionsBuilder.LogTo(Console.WriteLine, [RelationalEventId.CommandExecuting])
+                .EnableSensitiveDataLogging()
+                .EnableDetailedErrors();
 #endif
             });
             services.AddGuidGenerator(efDbContextOptions.DbType);
