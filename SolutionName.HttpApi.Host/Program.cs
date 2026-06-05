@@ -50,195 +50,215 @@ namespace SolutionName.HttpApi.Host
 
             #endregion
 
-            var builder = WebApplication.CreateBuilder(args);
-
-            var configuration = builder.Configuration;
-
-            builder.Host.UseSerilog();
-
-            // Add services to the container.
-
-            #region 注册数据库EFCore模块
-
-            var efDbContextOptions = configuration.GetSection("EntityFrameworkCoreOptions").Get<EntityFrameworkCoreDbContextOptions>() ?? throw new ArgumentNullException("未找到数据库配置信息");
-            builder.Services.AddEntityFrameworkCoreModule(efDbContextOptions);
-
-            #endregion
-
-            #region 注册应用模块
-
-            builder.Services.AddApplicationModule(configuration);
-
-            #endregion
-
-            #region 配置WebApi
-
-            builder.Services.AddHealthChecks();
-            builder.Services.AddControllers().AddJsonOptions(options =>
+            try
             {
-                options.JsonSerializerOptions.Converters.Add(new DateTimeToJsonConverter());
-                options.JsonSerializerOptions.Converters.Add(new DateTimeOffsetToJsonConverter());
-            });
-            builder.Services.AddRequestLogFilter();
-            builder.Services.AddApiResultFilter();
+                Log.Information("Starting SolutionName.HttpApi.Host");
 
-            #endregion
+                var builder = WebApplication.CreateBuilder(args);
 
-            #region 配置JWT授权和鉴权
+                var configuration = builder.Configuration;
 
-            var jwtSetting = configuration.GetSection("JwtBearerSetting").Get<JwtBearerSetting>() ?? throw new ArgumentNullException("未找到JWT配置信息");
-            builder.Services.AddJwtBearerAuthentication(setting =>
-            {
-                setting.Audience = jwtSetting.Audience;
-                setting.UserInfoDesKey = jwtSetting.UserInfoDesKey;
-                setting.Expire = jwtSetting.Expire;
-                setting.ExpireType = jwtSetting.ExpireType;
-                setting.Issuer = jwtSetting.Issuer;
-                setting.SecurityKey = jwtSetting.SecurityKey;
-            });
+                builder.Host.UseSerilog();
 
-            // 鉴权规则
-            builder.Services.AddIdentifierAuthorization(async (context, requirement) =>
-            {
-                var isSuccess = false;
-                var id = context.User.FindFirst("Id")?.Value;
-                if (!string.IsNullOrEmpty(id) && Guid.TryParse(id, out var userId))
+                // Add services to the container.
+
+                #region 注册数据库EFCore模块
+
+                var efDbContextOptions = configuration.GetSection("EntityFrameworkCoreOptions").Get<EntityFrameworkCoreDbContextOptions>() ?? throw new ArgumentNullException("未找到数据库配置信息");
+                builder.Services.AddEntityFrameworkCoreModule(efDbContextOptions);
+
+                #endregion
+
+                #region 注册应用模块
+
+                builder.Services.AddApplicationModule(configuration);
+
+                #endregion
+
+                #region 配置WebApi
+
+                builder.Services.AddHealthChecks();
+                builder.Services.AddControllers().AddJsonOptions(options =>
                 {
-                    // 根据用户Id获取权限码集合，从分布式缓存中获取
-                    var userCodes = await UserPermissionStorage.GetAsync(userId);
-                    isSuccess = requirement.Check(userCodes);
-                }
-                return isSuccess;
-            });
-
-            // ApiKey鉴权
-            builder.Services.AddApiKeyAuthorization(configuration);
-
-            #endregion
-
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            // builder.Services.AddEndpointsApiExplorer();
-
-            #region 配置Swagger文档
-
-            if (!builder.Environment.IsProduction())
-            {
-                builder.Services.AddMySwagger(typeof(ModuleEnum), options =>
-                {
-                    options.AddTokenHeaderAuthorize(JwtBearerDefaults.AuthenticationScheme); //JWT认证
+                    options.JsonSerializerOptions.Converters.Add(new DateTimeToJsonConverter());
+                    options.JsonSerializerOptions.Converters.Add(new DateTimeOffsetToJsonConverter());
                 });
-            }
 
-            #endregion
+                // 添加全局请求日志过滤器，注意：如果在生产环境开启可能会导致敏感数据泄露
+                if (!builder.Environment.IsProduction())
+                {
+                    builder.Services.AddRequestLogFilter();
+                }
 
-            #region 配置跨域
+                // 添加全局ApiResult包装过滤器，可以统一参数校验失败的返回结果格式
+                builder.Services.AddApiResultFilter();
 
-            var corsOptions = configuration.GetSection("CorsOptions").Get<CorsOptions>();
-            builder.Services.AddMyCors(options =>
-            {
-                options.IsCors = corsOptions?.IsCors ?? false;
-                options.Hosts = corsOptions?.Hosts;
-            });
+                #endregion
 
-            #endregion
+                #region 配置JWT授权和鉴权
 
-            #region 注册Hangfire服务
+                var jwtSetting = configuration.GetSection("JwtBearerSetting").Get<JwtBearerSetting>() ?? throw new ArgumentNullException("未找到JWT配置信息");
+                builder.Services.AddJwtBearerAuthentication(setting =>
+                {
+                    setting.Audience = jwtSetting.Audience;
+                    setting.UserInfoDesKey = jwtSetting.UserInfoDesKey;
+                    setting.Expire = jwtSetting.Expire;
+                    setting.ExpireType = jwtSetting.ExpireType;
+                    setting.Issuer = jwtSetting.Issuer;
+                    setting.SecurityKey = jwtSetting.SecurityKey;
+                });
 
-            var hangfireOptions = configuration.GetSection("HangfireOptions").Get<HangfireOptions>() ?? throw new ArgumentNullException("未找到hangfire配置信息");
-            builder.Services.AddHangfireAndServer(hangfireOptions);
+                // 鉴权规则
+                builder.Services.AddIdentifierAuthorization(async (context, requirement) =>
+                {
+                    var isSuccess = false;
+                    var id = context.User.FindFirst("Id")?.Value;
+                    if (!string.IsNullOrEmpty(id) && Guid.TryParse(id, out var userId))
+                    {
+                        // 根据用户Id获取权限码集合，从分布式缓存中获取
+                        var userCodes = await UserPermissionStorage.GetAsync(userId);
+                        isSuccess = requirement.Check(userCodes);
+                    }
+                    return isSuccess;
+                });
 
-            #endregion
+                // ApiKey鉴权
+                builder.Services.AddApiKeyAuthorization(configuration);
 
-            #region 注册上传文件配置
-            var fileUploadOptions = configuration.GetSection("FileUploadOptions").Get<FileUploadOptions>() ?? new FileUploadOptions();
-            builder.Services.Configure<FileUploadOptions>(options =>
-            {
-                options.FileMaxSize = fileUploadOptions.FileMaxSize;
-                options.SavePath = fileUploadOptions.SavePath;
-                options.FileTypeOptions = fileUploadOptions.FileTypeOptions;
-            });
-            int fileMaxSize = fileUploadOptions.FileMaxSize * 1024 * 1024;
-            // Kestrel设置请求体限制
-            builder.Services.Configure<KestrelServerOptions>(options =>
-            {
-                options.Limits.MaxRequestBodySize = fileMaxSize;
-            });
-            // IIS设置请求体限制
-            builder.Services.Configure<IISServerOptions>(options =>
-            {
-                options.MaxRequestBodySize = fileMaxSize;
-            });
-            // Form表单设置请求体限制
-            builder.Services.Configure<FormOptions>(options =>
-            {
-                options.MultipartBodyLengthLimit = fileMaxSize;
-            });
-            #endregion
+                #endregion
 
-            #region 配置转发头中间件
-            builder.Services.Configure<ForwardedHeadersOptions>(options =>
-            {
-                options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-            });
-            #endregion
+                // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+                // builder.Services.AddEndpointsApiExplorer();
 
-            #region 配置加密接口
-            EncryptionApiOptionManager.Register(() =>
-            {
-                return
-                [
-                    new EncryptionApiOptions()
+                #region 配置Swagger文档
+
+                if (!builder.Environment.IsProduction())
+                {
+                    builder.Services.AddMySwagger(typeof(ModuleEnum), options =>
+                    {
+                        options.AddTokenHeaderAuthorize(JwtBearerDefaults.AuthenticationScheme); //JWT认证
+                    });
+                }
+
+                #endregion
+
+                #region 配置跨域
+
+                var corsOptions = configuration.GetSection("CorsOptions").Get<CorsOptions>();
+                builder.Services.AddMyCors(options =>
+                {
+                    options.IsCors = corsOptions?.IsCors ?? false;
+                    options.Hosts = corsOptions?.Hosts;
+                });
+
+                #endregion
+
+                #region 注册Hangfire服务
+
+                var hangfireOptions = configuration.GetSection("HangfireOptions").Get<HangfireOptions>() ?? throw new ArgumentNullException("未找到hangfire配置信息");
+                builder.Services.AddHangfireAndServer(hangfireOptions);
+
+                #endregion
+
+                #region 注册上传文件配置
+                var fileUploadOptions = configuration.GetSection("FileUploadOptions").Get<FileUploadOptions>() ?? new FileUploadOptions();
+                builder.Services.Configure<FileUploadOptions>(options =>
+                {
+                    options.FileMaxSize = fileUploadOptions.FileMaxSize;
+                    options.SavePath = fileUploadOptions.SavePath;
+                    options.FileTypeOptions = fileUploadOptions.FileTypeOptions;
+                });
+                int fileMaxSize = fileUploadOptions.FileMaxSize * 1024 * 1024;
+                // Kestrel设置请求体限制
+                builder.Services.Configure<KestrelServerOptions>(options =>
+                {
+                    options.Limits.MaxRequestBodySize = fileMaxSize;
+                });
+                // IIS设置请求体限制
+                builder.Services.Configure<IISServerOptions>(options =>
+                {
+                    options.MaxRequestBodySize = fileMaxSize;
+                });
+                // Form表单设置请求体限制
+                builder.Services.Configure<FormOptions>(options =>
+                {
+                    options.MultipartBodyLengthLimit = fileMaxSize;
+                });
+                #endregion
+
+                #region 配置转发头中间件
+                builder.Services.Configure<ForwardedHeadersOptions>(options =>
+                {
+                    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+                });
+                #endregion
+
+                #region 配置加密接口
+                EncryptionApiOptionManager.Register(() =>
+                {
+                    return
+                    [
+                        new EncryptionApiOptions()
                     {
                         AppId="07e2b50a-950a-a7f7-c8f7-3a16a79c788c",
                         SecretKey="oL+pccgAs6CF7bjW58/XW9GuJNxsjcKHzFwadhhMGoc=",
                         Sm4Key="1234567890ascbdf"
                     }
-                ];
-            }, "SolutionName");
-            #endregion
+                    ];
+                }, "SolutionName");
+                #endregion
 
-            var app = builder.Build();
+                var app = builder.Build();
 
-            // 使用转发头中间件，处理反向代理服务器传递过来的头信息
-            app.UseForwardedHeaders();
+                // 使用转发头中间件，处理反向代理服务器传递过来的头信息
+                app.UseForwardedHeaders();
 
-            // 应用跨域默认策略
-            app.UseCors();
+                // 应用跨域默认策略
+                app.UseCors();
 
-            // 注意添加全局异常捕获，可以屏蔽UseDeveloperExceptionPage
-            app.UseGlobalExceptionMiddleware();
+                // 注意添加全局异常捕获，可以屏蔽UseDeveloperExceptionPage
+                app.UseGlobalExceptionMiddleware();
 
-            // 添加数据库工作单元中间件
-            app.UseUnitOfWorkMiddleware<SolutionNameContext>();
+                // 添加数据库工作单元中间件
+                app.UseUnitOfWorkMiddleware<SolutionNameContext>();
 
-            // 添加健康检查终结点
-            app.UseHealthChecks(PathString.FromUriComponent("/"));
+                // 添加健康检查终结点
+                app.UseHealthChecks(PathString.FromUriComponent("/"));
 
-            // Configure the HTTP request pipeline.
+                // Configure the HTTP request pipeline.
 
-            #region 配置SwaggerUI
+                #region 配置SwaggerUI
 
-            if (!app.Environment.IsProduction())
-            {
-                app.UseMySwaggerUI(typeof(ModuleEnum));
+                if (!app.Environment.IsProduction())
+                {
+                    app.UseMySwaggerUI(typeof(ModuleEnum));
+                }
+
+                #endregion
+
+                //app.UseHttpsRedirection();
+
+                app.UseAuthorization();
+
+                app.MapControllers();
+
+                #region 配置Hangfire任务和仪表盘
+
+                app.Services.UseHangfireBackgroundJobs();
+                app.UseHangfireDashboard(hangfireOptions.Account, hangfireOptions.Password);
+
+                #endregion
+
+                app.Run();
             }
-
-            #endregion
-
-            //app.UseHttpsRedirection();
-
-            app.UseAuthorization();
-
-            app.MapControllers();
-
-            #region 配置Hangfire任务和仪表盘
-
-            app.Services.UseHangfireBackgroundJobs();
-            app.UseHangfireDashboard(hangfireOptions.Account, hangfireOptions.Password);
-
-            #endregion
-
-            app.Run();
+            catch (Exception ex)
+            {
+                Log.Fatal(ex, "Application terminated unexpectedly");
+            }
+            finally
+            {
+                Log.CloseAndFlush();
+            }
         }
     }
 }
