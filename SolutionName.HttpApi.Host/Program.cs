@@ -41,6 +41,9 @@ namespace SolutionName.HttpApi.Host
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Warning) //将Microsoft前缀的日志的最小输出级别改成Warning
                 .WriteTo.File(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs", "logs.txt"), rollingInterval: RollingInterval.Day)
+#if DEBUG
+                .WriteTo.Console()
+#endif
                 .CreateLogger();
 
             #endregion
