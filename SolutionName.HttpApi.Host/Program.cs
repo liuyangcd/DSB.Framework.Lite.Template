@@ -39,10 +39,12 @@ namespace SolutionName.HttpApi.Host
             #region 日志配置
 
             Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Override("Microsoft", LogEventLevel.Warning) //将Microsoft前缀的日志的最小输出级别改成Warning
-                .WriteTo.File(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs", "logs.txt"), rollingInterval: RollingInterval.Day)
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+                .MinimumLevel.Override("System", LogEventLevel.Warning)
+                .Enrich.FromLogContext()
+                .WriteTo.File(Path.Combine(AppContext.BaseDirectory, "logs", "logs.txt"), rollingInterval: RollingInterval.Day, rollOnFileSizeLimit: true)
 #if DEBUG
-                .WriteTo.Console()
+                .WriteTo.Console(outputTemplate: "[{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} {Level:u3}] {Message:lj}{NewLine}{Exception}")
 #endif
                 .CreateLogger();
 
