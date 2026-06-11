@@ -9,15 +9,8 @@ namespace SolutionName.HttpApi.Host.Controllers
     /// 基于默认管理后台用户的控制器基类
     /// </summary>
     [Route("api/[controller]/[action]")]
-    public class ManagerControllerBase : JwtControllerBase<JwtUserContext, Guid>
+    public class ManagerControllerBase(IJwtService jwtService) : JwtControllerBase<JwtUserContext, Guid>(jwtService)
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="jwtService"></param>
-        public ManagerControllerBase(IJwtService jwtService) : base(jwtService)
-        {
-            
-        }
+
     }
 }
