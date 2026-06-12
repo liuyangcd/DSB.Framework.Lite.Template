@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SolutionName.Application.BackgroundJob
+namespace SolutionName.Application.BackgroundJobs
 {
     /// <summary>
     /// 后台任务抽象基类
@@ -14,8 +14,9 @@ namespace SolutionName.Application.BackgroundJob
         /// <summary>
         /// 默认执行的任务方法
         /// </summary>
+        /// <param name="ct">取消令牌：固定传入CancellationToken.None，Hanfire框架会自动构建</param>
         /// <returns></returns>
-        public abstract Task ExecuteAsync();
+        public abstract Task ExecuteAsync(CancellationToken ct);
     }
 
     /// <summary>
@@ -27,7 +28,8 @@ namespace SolutionName.Application.BackgroundJob
         /// 默认执行的任务方法
         /// </summary>
         /// <param name="parameter">入参</param>
+        /// <param name="ct">取消令牌：固定传入CancellationToken.None，Hanfire框架会自动构建</param>
         /// <returns></returns>
-        public abstract Task ExecuteAsync(T parameter);
+        public abstract Task ExecuteAsync(T parameter, CancellationToken ct);
     }
 }

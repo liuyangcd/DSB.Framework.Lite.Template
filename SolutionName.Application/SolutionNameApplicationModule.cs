@@ -5,7 +5,7 @@ using DSB.Framework.Lite.Service.Extensions;
 using Hangfire;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using SolutionName.Application.BackgroundJob.Jobs;
+using SolutionName.Application.BackgroundJobs.Jobs;
 using SolutionName.Application.Services.Systems;
 using SolutionName.Domain;
 using SolutionName.Domain.Options;
@@ -75,7 +75,9 @@ namespace SolutionName.Application
         public static void UseHangfireBackgroundJobs(this IServiceProvider serviceProvider)
         {
             var recurringJobManager = serviceProvider.GetRequiredService<IRecurringJobManager>();
-            // recurringJobManager.AddOrUpdate<CycleJob>(nameof(CycleJob), job => job.ExecuteAsync(), Cron.Minutely);
+
+            // 注册一个每分钟执行一次的周期性任务
+            recurringJobManager.AddOrUpdate<CycleJob>(nameof(CycleJob), job => job.ExecuteAsync(CancellationToken.None), Cron.Minutely);
         }
     }
 }

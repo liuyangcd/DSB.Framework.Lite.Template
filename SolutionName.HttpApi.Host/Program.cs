@@ -7,7 +7,6 @@ using DSB.Framework.Lite.WebApi.ApiKeyAuthorization;
 using DSB.Framework.Lite.WebApi.EncryptionApi;
 using DSB.Framework.Lite.WebApi.Extensions;
 using DSB.Framework.Lite.WebApi.Extensions.Http.Cors;
-using DSB.Framework.Lite.WebApi.Extensions.Http.Filter;
 using DSB.Framework.Lite.WebApi.Extensions.Http.JwtBearer;
 using DSB.Framework.Lite.WebApi.Extensions.Http.Middleware;
 using Hangfire;
@@ -156,7 +155,11 @@ namespace SolutionName.HttpApi.Host
                 #region 注册Hangfire服务
 
                 var hangfireOptions = configuration.GetSection("HangfireOptions").Get<HangfireOptions>() ?? throw new ArgumentNullException("未找到hangfire配置信息");
-                builder.Services.AddHangfireAndServer(hangfireOptions);
+                builder.Services.AddHangfireAndServer(hangfireOptions, jobServerOptions =>
+                {
+                    // 使用Redis可以设置成1s，提高检测到取消任务的响应速度，默认是5s
+                    jobServerOptions.CancellationCheckInterval = TimeSpan.FromSeconds(1);
+                });
 
                 #endregion
 
