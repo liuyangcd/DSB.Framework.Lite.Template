@@ -30,7 +30,7 @@ namespace SolutionName.HttpApi.Host.Controllers.Systems
         /// <param name="inputDto"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<EncryptionApiResult<EncryptionApiTestDto>> Test([FromBody] EncryptionApiInput<EncryptionApiTestDto> inputDto)
+        public async Task<EncryptionApiResult<EncryptionApiTestDto>> EncryptionApi([FromBody] EncryptionApiInput<EncryptionApiTestDto> inputDto)
         {
             return EncryptionApiResult<EncryptionApiTestDto>.GetSuccess(inputDto.Data, inputDto.ApiOption);
         }
