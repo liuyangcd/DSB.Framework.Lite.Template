@@ -119,18 +119,18 @@ public async Task<ResultDto> CreateAsync(CreateDto input)
 
 Hangfire jobs, hosted services, console apps, etc. run **outside** the HTTP request scope, so the middleware does NOT apply. You must inject `IUnitOfWork<SolutionNameContext>` and call `await unitOfWork.SaveChangesAsync()` at the end.
 
-Reference: `TestJob.cs:41`, `CycleJob.cs:33`
+Reference: `OneTimeJob.cs:46`, `CycleJob.cs:28`
 
 ```csharp
-public class TestJob : BackgroundJobBase<Guid>
+public class OneTimeJob : BackgroundJobBase<Guid>
 {
     private readonly IUnitOfWork<SolutionNameContext> unitOfWork;
 
-    public override async Task ExecuteAsync(Guid parameter)
+    public override async Task ExecuteAsync(Guid parameter, CancellationToken ct)
     {
-        var user = await userRepository.GetAsync(x => x.Id == parameter);
+        var user = await userRepository.GetAsync(x => x.Id == parameter, cancellationToken: ct);
         // ...
-        await unitOfWork.SaveChangesAsync(); // REQUIRED — no middleware
+        await unitOfWork.SaveChangesAsync(ct); // REQUIRED — no middleware
     }
 }
 ```
@@ -166,6 +166,15 @@ public class MyService : SolutionNameApplicationService
 | `IUnitOfWorkProvider<TDbContext>` | Same NuGet | Creates independent UoW scopes via `CreateScope()` |
 | `UnitOfWorkScope<TDbContext>` | Same NuGet | Holds `IServiceScope` + `IUnitOfWork`; `Dispose()` cleans up the scope |
 | `UnitOfWorkMiddleware<TDbContext>` | NuGet `DSB.Framework.Lite.Data.EFCore.Repository.WebApi` | Auto-saves after each HTTP request |
+
+## Hangfire Job Conventions
+
+- **Base classes** live in `SolutionName.Application.BackgroundJobs`: `BackgroundJobBase` (no parameter) and `BackgroundJobBase<T>` (with parameter). Both inherit from `SolutionNameApplicationService` and are auto-registered as scoped services.
+- **Job classes** live under `SolutionName.Application.BackgroundJobs.Jobs`.
+- **`CancellationToken`** is always accepted as the second parameter of `ExecuteAsync` and **must be propagated** to all async calls (`SaveChangesAsync(ct)`, repository methods with `cancellationToken: ct`, etc.). Hangfire automatically provides a cancellation token that triggers on server shutdown or job deletion.
+- **Cancellation handling**: catch `OperationCanceledException` for graceful shutdown. Use `ct.ThrowIfCancellationRequested()` to manually check in loops or between steps.
+- **`[JobDisplayName("描述")]`** on `ExecuteAsync` override gives readable names in the Hangfire dashboard.
+- Reference: `OneTimeJob.cs` (one-time job with cancellation demo), `CycleJob.cs` (recurring job).
 
 ## Repository Operations — Delete & Query Conventions
 
