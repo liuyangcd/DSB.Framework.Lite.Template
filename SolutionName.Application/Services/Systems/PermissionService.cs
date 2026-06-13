@@ -34,8 +34,8 @@ namespace SolutionName.Application.Services.Systems
         public async Task<List<GetAllListOutputDto>> GetAllListAsync(string? name, string? code, PermissionType? type, RecordStatus? status)
         {
             Expression<Func<SystemPermissionEntity, bool>> predicate = p => true;
-            predicate = predicate.AndIf(name.IsNotNullOrEmpty(), p => p.Name.Contains(name))
-                .AndIf(code.IsNotNullOrEmpty(), p => p.Code.Contains(code))
+            predicate = predicate.AndIf(name.IsNotNullOrEmpty(), p => p.Name.Contains(name!))
+                .AndIf(code.IsNotNullOrEmpty(), p => p.Code.Contains(code!))
                 .AndIf(type.HasValue, p => p.Type == type!.Value)
                 .AndIf(status.HasValue, p => p.Status == status!.Value);
 
