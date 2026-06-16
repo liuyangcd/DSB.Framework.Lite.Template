@@ -45,9 +45,9 @@ namespace SolutionName.Application.Services.Systems
                     ParentId = parentId,
                     Sort = sort
                 });
-
-                await unitOfWork.SaveChangesAsync();
             }
+
+            await unitOfWork.SaveChangesAsync();
         }
 
         private static List<(string Code, string Name, PermissionType Type, string? ParentCode, int Sort)> GetSeedPermissions()
