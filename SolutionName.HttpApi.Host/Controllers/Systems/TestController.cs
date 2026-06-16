@@ -56,5 +56,41 @@ namespace SolutionName.HttpApi.Host.Controllers.Systems
             backgroundJobClient.Delete(jobId);
             return ApiResult<string>.GetSuccess("Background job cancelled successfully.");
         }
+
+        /// <summary>
+        /// 客户端取消请求示例
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<ApiResult<bool>> ClientCancelRequest(CancellationToken cancellationToken)
+        {
+            for (int i = 0; i < 30; i++)
+            {
+                // 每轮循环检查一次客户端是否断开
+                cancellationToken.ThrowIfCancellationRequested();
+
+                await Task.Delay(1000); // 模拟一些工作
+            }
+            return ApiResult<bool>.GetSuccess(true);
+        }
+
+        /// <summary>
+        /// 服务器取消请求示例
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<ApiResult<bool>> ServerCancelRequest()
+        {
+            var cts = new CancellationTokenSource();
+            for (int i = 0; i < 20; i++)
+            {
+                if (i > 10)
+                {
+                    cts.Cancel(); // 模拟服务器在某个条件下取消请求
+                }
+                await Task.Delay(1000, cts.Token); // 模拟一些工作
+            }
+            return ApiResult<bool>.GetSuccess(true);
+        }
     }
 }

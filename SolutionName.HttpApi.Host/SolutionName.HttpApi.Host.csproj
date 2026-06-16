@@ -12,7 +12,7 @@
     <PackageReference Include="DSB.Framework.Lite.Hangfire.Extensions" Version="1.0.6" />
     <PackageReference Include="DSB.Framework.Lite.WebApi.ApiKeyAuthorization" Version="1.0.5" />
     <PackageReference Include="DSB.Framework.Lite.WebApi.EncryptionApi" Version="1.0.2" />
-    <PackageReference Include="DSB.Framework.Lite.WebApi.Extensions" Version="1.0.26" />
+    <PackageReference Include="DSB.Framework.Lite.WebApi.Extensions" Version="1.0.28" />
     <PackageReference Include="Serilog.AspNetCore" Version="8.0.3" />
   </ItemGroup>
 
