@@ -24,15 +24,14 @@ using SolutionName.EntityFrameworkCore;
 namespace SolutionName.HttpApi.Host
 {
     /// <summary>
-    /// 
+    /// 主程序
     /// </summary>
     public class Program
     {
         /// <summary>
-        /// 
+        /// Main函数
         /// </summary>
         /// <param name="args"></param>
-        /// <exception cref="ArgumentNullException"></exception>
         public static void Main(string[] args)
         {
             #region 日志配置
