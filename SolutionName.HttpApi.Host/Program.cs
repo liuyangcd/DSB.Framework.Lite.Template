@@ -189,6 +189,7 @@ namespace SolutionName.HttpApi.Host
                 #endregion
 
                 #region 配置转发头中间件
+                // 配置转发头中间件，处理反向代理服务器传递过来的头信息，如X-Forwarded-For和X-Forwarded-Proto，确保在控制器通过ClientIP属性获取到正确的客户端IP地址
                 builder.Services.Configure<ForwardedHeadersOptions>(options =>
                 {
                     options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
@@ -196,6 +197,7 @@ namespace SolutionName.HttpApi.Host
                 #endregion
 
                 #region 配置加密接口
+                // 此处示例固定一个配置，如果需要从数据库加载，请在对应的启动服务中调用配置
                 EncryptionApiOptionManager.Register(() =>
                 {
                     return
