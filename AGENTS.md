@@ -69,12 +69,11 @@ From `Program.cs`:
 1. `UseForwardedHeaders`
 2. `UseCors`
 3. `UseGlobalExceptionMiddleware` (registered after request logging middleware if enabled)
-4. `UseUnitOfWorkMiddleware<SolutionNameContext>`
-5. `UseHealthChecks`
-6. Swagger UI (non-Prod only)
-7. `UseAuthorization`
-8. `MapControllers`
-9. Hangfire dashboard + jobs
+4. `UseHealthChecks`
+5. Swagger UI (non-Prod only)
+6. `UseAuthorization`
+7. `MapControllers`
+8. Hangfire dashboard + jobs
 
 ## Configuration & Services
 
@@ -103,7 +102,7 @@ EF Core's default transaction behavior is used: repositories do **NOT** immediat
 
 ### Rule 1 — API pipeline: automatic save
 
-`UnitOfWorkMiddleware<SolutionNameContext>` wraps every HTTP request. After the controller/method completes, the middleware calls `SaveChangesAsync()` automatically. **You do nothing** — the middleware handles it.
+`AddUnitOfWorkFilter<SolutionNameContext>()` registers a global ActionFilter in the MVC pipeline. After the controller action completes, the filter calls `SaveChangesAsync()` automatically for successful responses, or rolls back on unhandled exceptions. **You do nothing** — the filter handles it.
 
 ```csharp
 // In a controller action — no manual save needed
@@ -112,12 +111,12 @@ public async Task<ResultDto> CreateAsync(CreateDto input)
     await userRepository.InsertAsync(entity);  // no SaveChanges call
     return result;
 }
-// UnitOfWorkMiddleware calls SaveChangesAsync() after this returns
+// UnitOfWorkFilter calls SaveChangesAsync() after the action returns successfully
 ```
 
 ### Rule 2 — Outside the API pipeline: inject IUnitOfWork and save manually
 
-Hangfire jobs, hosted services, console apps, etc. run **outside** the HTTP request scope, so the middleware does NOT apply. You must inject `IUnitOfWork<SolutionNameContext>` and call `await unitOfWork.SaveChangesAsync()` at the end.
+Hangfire jobs, hosted services, console apps, etc. run **outside** the HTTP request scope, so the filter does NOT apply. You must inject `IUnitOfWork<SolutionNameContext>` and call `await unitOfWork.SaveChangesAsync()` at the end.
 
 Reference: `OneTimeJob.cs:46`, `CycleJob.cs:28`
 
@@ -130,7 +129,7 @@ public class OneTimeJob : BackgroundJobBase<Guid>
     {
         var user = await userRepository.GetAsync(x => x.Id == parameter, cancellationToken: ct);
         // ...
-        await unitOfWork.SaveChangesAsync(ct); // REQUIRED — no middleware
+        await unitOfWork.SaveChangesAsync(ct); // REQUIRED — no filter
     }
 }
 ```
@@ -165,7 +164,7 @@ public class MyService : SolutionNameApplicationService
 | `IUnitOfWork<TDbContext>` | NuGet `DSB.Framework.Lite.Data.EFCore.Repository` | Wraps `DbContext`; exposes `SaveChangesAsync()`, `BeginTransactionAsync()` |
 | `IUnitOfWorkProvider<TDbContext>` | Same NuGet | Creates independent UoW scopes via `CreateScope()` |
 | `UnitOfWorkScope<TDbContext>` | Same NuGet | Holds `IServiceScope` + `IUnitOfWork`; `Dispose()` cleans up the scope |
-| `UnitOfWorkMiddleware<TDbContext>` | NuGet `DSB.Framework.Lite.Data.EFCore.Repository.WebApi` | Auto-saves after each HTTP request |
+| `UnitOfWorkFilter<TDbContext>` | NuGet `DSB.Framework.Lite.Data.EFCore.Repository.WebApi` | ActionFilter that auto-saves after each controller action |
 
 ## Hangfire Job Conventions
 
