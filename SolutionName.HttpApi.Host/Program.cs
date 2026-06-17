@@ -88,6 +88,9 @@ namespace SolutionName.HttpApi.Host
                     builder.Services.AddRequestLogFilter();
                 }
 
+                // 添加全局工作单元过滤器，确保每个请求都在一个工作单元中执行，处理事务提交和回滚，在action执行后自动提交，如果发生未处理的异常则回滚
+                builder.Services.AddUnitOfWorkFilter<SolutionNameContext>();
+
                 // 添加全局ApiResult包装过滤器，可以统一参数校验失败的返回结果格式
                 builder.Services.AddApiResultFilter();
 
@@ -220,11 +223,8 @@ namespace SolutionName.HttpApi.Host
                 // 应用跨域默认策略
                 app.UseCors();
 
-                // 注意添加全局异常捕获，可以屏蔽UseDeveloperExceptionPage
+                // 添加全局异常捕获
                 app.UseGlobalExceptionMiddleware();
-
-                // 添加数据库工作单元中间件
-                app.UseUnitOfWorkMiddleware<SolutionNameContext>();
 
                 // 添加健康检查终结点
                 app.UseHealthChecks(PathString.FromUriComponent("/"));
