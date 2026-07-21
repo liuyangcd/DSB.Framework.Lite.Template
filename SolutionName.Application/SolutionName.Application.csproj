@@ -7,12 +7,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="DSB.Framework.Lite.Application.HttpClient.Binder" Version="1.0.3" />
-		<PackageReference Include="DSB.Framework.Lite.Application.PBKDF2Password" Version="1.0.4" />
-		<PackageReference Include="DSB.Framework.Lite.Caching.Extensions" Version="1.0.14" />
-		<PackageReference Include="DSB.Framework.Lite.Service.Extensions" Version="1.0.5" />
-		<PackageReference Include="DSB.Framework.Lite.Tools.Captcha" Version="1.0.3" />
-		<PackageReference Include="Hangfire.Core" Version="1.8.22" />
+		<PackageReference Include="DSB.Framework.Lite.Application.HttpClient.Binder" Version="1.0.5" />
+		<PackageReference Include="DSB.Framework.Lite.Application.PBKDF2Password" Version="1.0.5" />
+		<PackageReference Include="DSB.Framework.Lite.Caching.Extensions" Version="1.0.15" />
+		<PackageReference Include="DSB.Framework.Lite.Service.Extensions" Version="1.0.6" />
+		<PackageReference Include="DSB.Framework.Lite.Tools.Captcha" Version="1.0.5" />
+		<PackageReference Include="Hangfire.Core" Version="1.8.24" />
 		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.1" />
 	</ItemGroup>
 
