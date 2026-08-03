@@ -2,6 +2,7 @@
 using DSB.Framework.Lite.WebApi.EncryptionApi;
 using DSB.Framework.Lite.WebApi.Extensions.SwaggerConfig.Attributes;
 using Hangfire;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SolutionName.Application.BackgroundJobs.Jobs;
 
@@ -91,6 +92,23 @@ namespace SolutionName.HttpApi.Host.Controllers.Systems
                 await Task.Delay(1000, cts.Token); // 模拟一些工作
             }
             return ApiResult<bool>.GetSuccess(true);
+        }
+    }
+
+    /// <summary>
+    /// ApiKey测试控制器
+    /// </summary>
+    [ApiExplorer(ModuleEnum.System)]
+    public class ApiKeyTestController : ApiKeyControllerBase
+    {
+        /// <summary>
+        /// ApiKey验证示例
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<ApiResult<string>> ApiKeyTest()
+        {
+            return ApiResult<string>.GetSuccess($"ApiKey验证成功，当前ApiKey名称为：{ApiKeyName}");
         }
     }
 }
