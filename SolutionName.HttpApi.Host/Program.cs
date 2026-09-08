@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Serilog;
 using Serilog.Events;
 using SolutionName.Application;
+using SolutionName.Application.Contracts.UserContext;
 using SolutionName.Application.Services.Systems;
 using SolutionName.Domain.Options;
 using SolutionName.EntityFrameworkCore;
@@ -114,11 +115,16 @@ namespace SolutionName.HttpApi.Host
                 {
                     var isSuccess = false;
                     var id = context.User.FindFirst("Id")?.Value;
+                    var userType = context.User.FindFirst("UserType")?.Value;
                     if (!string.IsNullOrEmpty(id) && Guid.TryParse(id, out var userId))
                     {
-                        // 根据用户Id获取权限码集合，从分布式缓存中获取
-                        var userCodes = await UserPermissionStorage.GetAsync(userId);
-                        isSuccess = requirement.Check(userCodes);
+                        // 用户类型为JwtUserContext时，获取用户Id对应的权限码集合，并进行权限校验
+                        if (userType == nameof(JwtUserContext))
+                        {
+                            // 根据用户Id获取权限码集合，从分布式缓存中获取
+                            var userCodes = await UserPermissionStorage.GetAsync(userId);
+                            isSuccess = requirement.Check(userCodes);
+                        }
                     }
                     return isSuccess;
                 });
