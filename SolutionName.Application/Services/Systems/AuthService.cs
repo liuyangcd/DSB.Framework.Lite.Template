@@ -43,6 +43,28 @@ namespace SolutionName.Application.Services.Systems
         }
 
         /// <summary>
+        /// 刷新用户上下文详细信息
+        /// </summary>
+        /// <param name="oldUserContext">之前刷新token对应的用户上下文</param>
+        /// <param name="tokenExpireTimeSpan">登录token过期时间间隔</param>
+        /// <returns></returns>
+        /// <exception cref="BusinessException"></exception>
+        public async Task<JwtUserContext> RefreshInfoAsync(JwtUserContext oldUserContext, TimeSpan tokenExpireTimeSpan)
+        {
+            var user = await userRepository.GetSingleAsync(
+                oldUserContext.Id,
+                ExpressionGenericMapper<SystemUserEntity, LoginOutputBo>.Selector) ?? throw new BusinessException("用户不存在");
+
+            if (user.Status == RecordStatus.Disabled) throw new BusinessException("用户已被禁用");
+
+            // 获取用户权限信息并存储到缓存
+            var permissionCodes = await userRepository.GetUserPermissionCodesAsync(user.Id);
+            await UserPermissionStorage.SetAsync(user.Id, permissionCodes, tokenExpireTimeSpan);
+
+            return user.TransObject<LoginOutputBo, JwtUserContext>();
+        }
+
+        /// <summary>
         /// 获取用户登录信息详情，注意：包含权限信息
         /// </summary>
         /// <param name="id">用户Id</param>

@@ -56,6 +56,22 @@ namespace SolutionName.HttpApi.Host.Controllers.Systems
         }
 
         /// <summary>
+        /// 刷新Token
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ApiResult<JwtTokenModel>> RefreshToken(RefreshTokenInputDto inputDto)
+        {
+            var token = await jwtService.RefreshTokenAsync<JwtUserContext, Guid>(inputDto.RefreshToken, async oldUserContext =>
+             {
+                 return await authService.RefreshInfoAsync(oldUserContext, jwtService.ExpireTimeSpan);
+             });
+
+            return ApiResult<JwtTokenModel>.GetSuccess(token);
+        }
+
+        /// <summary>
         /// 获取当前登录用户信息，含权限信息
         /// </summary>
         /// <returns></returns>

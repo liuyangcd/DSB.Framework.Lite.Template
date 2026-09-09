@@ -108,6 +108,9 @@ namespace SolutionName.HttpApi.Host
                     setting.ExpireType = jwtSetting.ExpireType;
                     setting.Issuer = jwtSetting.Issuer;
                     setting.SecurityKey = jwtSetting.SecurityKey;
+                    setting.RefreshSecurityKey = jwtSetting.RefreshSecurityKey;
+                    setting.RefreshExpire = jwtSetting.RefreshExpire;
+                    setting.RefreshExpireType = jwtSetting.RefreshExpireType;
                 });
 
                 // 鉴权规则
