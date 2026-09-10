@@ -63,6 +63,8 @@ namespace SolutionName.HttpApi.Host.Controllers.Systems
         [AllowAnonymous]
         public async Task<ApiResult<JwtTokenModel>> RefreshToken(RefreshTokenInputDto inputDto)
         {
+            // 如果需要需要使原来的RefreshToken失效，这里可以做一个缓存来处理
+
             var token = await jwtService.RefreshTokenAsync<JwtUserContext, Guid>(inputDto.RefreshToken, async oldUserContext =>
              {
                  return await authService.RefreshInfoAsync(oldUserContext, jwtService.ExpireTimeSpan);
