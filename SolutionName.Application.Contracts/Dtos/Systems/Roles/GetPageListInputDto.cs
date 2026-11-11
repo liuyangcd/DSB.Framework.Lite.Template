@@ -1,4 +1,5 @@
 ﻿using DSB.Framework.Lite.Data.EFCore.Repository.Abstractions;
+using DSB.Framework.Lite.Data.Repository.Abstractions;
 using SolutionName.Domain.Enums;
 using System;
 using System.Collections.Generic;

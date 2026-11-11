@@ -2,6 +2,7 @@
 using DSB.Framework.Lite.Core;
 using DSB.Framework.Lite.Data.EFCore.Extensions.SequentialGuid;
 using DSB.Framework.Lite.Data.EFCore.Repository.Abstractions;
+using DSB.Framework.Lite.Data.Repository.Abstractions;
 using Microsoft.Extensions.Logging;
 using SolutionName.Application.Contracts.Bos.Systems.Users;
 using SolutionName.Application.Contracts.Dtos.Systems.Users;

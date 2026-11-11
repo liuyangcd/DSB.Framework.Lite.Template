@@ -1,5 +1,6 @@
 ﻿using DSB.Framework.Lite.Core;
 using DSB.Framework.Lite.Data.EFCore.Repository.Abstractions;
+using DSB.Framework.Lite.Data.Repository.Abstractions;
 using DSB.Framework.Lite.WebApi.Extensions.Http.JwtBearer;
 using DSB.Framework.Lite.WebApi.Extensions.SwaggerConfig.Attributes;
 using Microsoft.AspNetCore.Mvc;

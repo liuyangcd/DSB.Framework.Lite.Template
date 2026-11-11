@@ -2,6 +2,7 @@
 using DSB.Framework.Lite.Data.EFCore.Extensions.SequentialGuid;
 using DSB.Framework.Lite.Data.EFCore.Repository;
 using DSB.Framework.Lite.Data.EFCore.Repository.Abstractions;
+using DSB.Framework.Lite.Data.Repository.Abstractions;
 using SolutionName.Application.Contracts.Dtos.Systems.Roles;
 using SolutionName.Domain.Entities.Systems;
 using SolutionName.Domain.Enums;
