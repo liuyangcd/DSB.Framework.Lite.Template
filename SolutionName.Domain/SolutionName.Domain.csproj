@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DSB.Framework.Lite.Data.EFCore.Repository.Abstractions" Version="2.0.0" />
+    <PackageReference Include="DSB.Framework.Lite.Data.EFCore.Repository.Abstractions" Version="2.0.1" />
   </ItemGroup>
 
 </Project>
