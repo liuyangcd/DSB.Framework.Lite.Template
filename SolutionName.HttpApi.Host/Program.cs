@@ -89,7 +89,8 @@ namespace SolutionName.HttpApi.Host
                     builder.Services.AddRequestLogFilter();
                 }
 
-                // 添加全局工作单元过滤器，确保每个请求都在一个工作单元中执行，处理事务提交和回滚，在action执行后自动提交，如果发生未处理的异常则回滚
+                // 添加全局工作单元过滤器，在Action正常返回后统一提交，Action中抛出异常则不提交
+                // 注意：过滤器只负责提交，不会自动开启事务，也不负责回滚；需要多步保存的原子性时请自行使用BeginTransactionAsync
                 builder.Services.AddUnitOfWorkFilter<SolutionNameContext>();
 
                 // 添加全局ApiResult包装过滤器，可以统一参数校验失败的返回结果格式
@@ -250,6 +251,9 @@ namespace SolutionName.HttpApi.Host
                 #endregion
 
                 //app.UseHttpsRedirection();
+
+                // 添加JWT认证中间件，解析Token并填充HttpContext.User
+                app.UseAuthentication();
 
                 app.UseAuthorization();
 
