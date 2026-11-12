@@ -23,7 +23,7 @@ namespace SolutionName.HttpApi.Host.Controllers.Systems
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [IdentifierAuthorize(SolutionNameConsts.PermissionCodes.RoleList)]
+        [IdentifierAuthorize(PermissionCodes.Role.List)]
         public async Task<ApiResult<List<GetAllRolesOutputDto>>> GetAllRoles()
         {
             return ApiResult<List<GetAllRolesOutputDto>>.GetSuccess(await roleService.GetAllRolesAsync());
@@ -35,7 +35,7 @@ namespace SolutionName.HttpApi.Host.Controllers.Systems
         /// <param name="inputDto"></param>
         /// <returns></returns>
         [HttpPost]
-        [IdentifierAuthorize(SolutionNameConsts.PermissionCodes.RolePage)]
+        [IdentifierAuthorize(PermissionCodes.Role.Page)]
         public async Task<ApiResult<PagedResult<GetPageListOutputDto>>> GetPageList(GetPageListInputDto inputDto)
         {
             return ApiResult<PagedResult<GetPageListOutputDto>>.GetSuccess(await roleService.GetPageListAsync(inputDto));
@@ -47,7 +47,7 @@ namespace SolutionName.HttpApi.Host.Controllers.Systems
         /// <param name="id">角色Id</param>
         /// <returns></returns>
         [HttpGet]
-        [IdentifierAuthorize(SolutionNameConsts.PermissionCodes.RoleDetail)]
+        [IdentifierAuthorize(PermissionCodes.Role.Detail)]
         public async Task<ApiResult<GetDetailOutputDto>> GetDetail(Guid id)
         {
             return ApiResult<GetDetailOutputDto>.GetSuccess(await roleService.GetDetailAsync(id));
@@ -59,7 +59,7 @@ namespace SolutionName.HttpApi.Host.Controllers.Systems
         /// <param name="inputDto"></param>
         /// <returns></returns>
         [HttpPost]
-        [IdentifierAuthorize(SolutionNameConsts.PermissionCodes.RoleCreate)]
+        [IdentifierAuthorize(PermissionCodes.Role.Create)]
         public async Task<ApiResult<bool>> Create(CreateInputDto inputDto)
         {
             return ApiResult<bool>.GetSuccess(await roleService.CreateAsync(inputDto, UserContext.Id));
@@ -71,7 +71,7 @@ namespace SolutionName.HttpApi.Host.Controllers.Systems
         /// <param name="inputDto"></param>
         /// <returns></returns>
         [HttpPost]
-        [IdentifierAuthorize(SolutionNameConsts.PermissionCodes.RoleUpdate)]
+        [IdentifierAuthorize(PermissionCodes.Role.Update)]
         public async Task<ApiResult<bool>> Update(UpdateInputDto inputDto)
         {
             return ApiResult<bool>.GetSuccess(await roleService.UpdateAsync(inputDto));
@@ -83,7 +83,7 @@ namespace SolutionName.HttpApi.Host.Controllers.Systems
         /// <param name="id">角色Id</param>
         /// <returns></returns>
         [HttpDelete]
-        [IdentifierAuthorize(SolutionNameConsts.PermissionCodes.RoleDelete)]
+        [IdentifierAuthorize(PermissionCodes.Role.Delete)]
         public async Task<ApiResult<bool>> Delete(Guid id)
         {
             return ApiResult<bool>.GetSuccess(await roleService.DeleteAsync(id));
@@ -95,7 +95,7 @@ namespace SolutionName.HttpApi.Host.Controllers.Systems
         /// <param name="inputDto"></param>
         /// <returns></returns>
         [HttpPost]
-        [IdentifierAuthorize(SolutionNameConsts.PermissionCodes.RoleStatus)]
+        [IdentifierAuthorize(PermissionCodes.Role.Status)]
         public async Task<ApiResult<bool>> UpdateStatusAsync(UpdateStatusInputDto inputDto)
         {
             return ApiResult<bool>.GetSuccess(await roleService.UpdateStatusAsync(inputDto));

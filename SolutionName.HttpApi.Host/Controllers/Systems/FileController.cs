@@ -26,7 +26,7 @@ namespace SolutionName.HttpApi.Host.Controllers.Systems
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [IdentifierAuthorize(SolutionNameConsts.PermissionCodes.FileConfig)]
+        [IdentifierAuthorize(PermissionCodes.File.Config)]
         public Task<FileUploadOptions> GetOptions()
         {
             return Task.FromResult(uploadFileService.GetOptions());
@@ -41,7 +41,7 @@ namespace SolutionName.HttpApi.Host.Controllers.Systems
         /// <returns></returns>
         [HttpPost]
         [RequestLogIgnore]
-        [IdentifierAuthorize(SolutionNameConsts.PermissionCodes.FileUpload)]
+        [IdentifierAuthorize(PermissionCodes.File.Upload)]
         public async Task<ApiResult<UploadOutputDto>> Upload([Required(ErrorMessage = "上传文件不能为空")] IFormFile file)
         {
             using var fileStream = file.OpenReadStream();

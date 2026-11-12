@@ -26,7 +26,7 @@ namespace SolutionName.HttpApi.Host.Controllers.Systems
         /// <param name="inputDto"></param>
         /// <returns></returns>
         [HttpPost]
-        [IdentifierAuthorize(SolutionNameConsts.PermissionCodes.UserPage)]
+        [IdentifierAuthorize(PermissionCodes.User.Page)]
         public async Task<ApiResult<PagedResult<GetPageListOutputDto>>> GetPageList(GetPageListInputDto inputDto)
         {
             return ApiResult<PagedResult<GetPageListOutputDto>>.GetSuccess(await userService.GetPageListAsync(inputDto));
@@ -38,7 +38,7 @@ namespace SolutionName.HttpApi.Host.Controllers.Systems
         /// <param name="id">用户Id</param>
         /// <returns></returns>
         [HttpGet]
-        [IdentifierAuthorize(SolutionNameConsts.PermissionCodes.UserDetail)]
+        [IdentifierAuthorize(PermissionCodes.User.Detail)]
         public async Task<ApiResult<GetDetailOutputDto>> GetDetail(Guid id)
         {
             return ApiResult<GetDetailOutputDto>.GetSuccess(await userService.GetDetailAsync(id));
@@ -50,7 +50,7 @@ namespace SolutionName.HttpApi.Host.Controllers.Systems
         /// <param name="inputDto"></param>
         /// <returns></returns>
         [HttpPost]
-        [IdentifierAuthorize(SolutionNameConsts.PermissionCodes.UserCreate)]
+        [IdentifierAuthorize(PermissionCodes.User.Create)]
         public async Task<ApiResult<bool>> Create(CreateInputDto inputDto)
         {
             return ApiResult<bool>.GetSuccess(await userService.CreateAsync(inputDto, UserContext?.Id));
@@ -62,7 +62,7 @@ namespace SolutionName.HttpApi.Host.Controllers.Systems
         /// <param name="inputDto"></param>
         /// <returns></returns>
         [HttpPost]
-        [IdentifierAuthorize(SolutionNameConsts.PermissionCodes.UserUpdate)]
+        [IdentifierAuthorize(PermissionCodes.User.Update)]
         public async Task<ApiResult<bool>> Update(UpdateInputDto inputDto)
         {
             return ApiResult<bool>.GetSuccess(await userService.UpdateAsync(inputDto));
@@ -74,7 +74,7 @@ namespace SolutionName.HttpApi.Host.Controllers.Systems
         /// <param name="id">用户Id</param>
         /// <returns></returns>
         [HttpDelete]
-        [IdentifierAuthorize(SolutionNameConsts.PermissionCodes.UserDelete)]
+        [IdentifierAuthorize(PermissionCodes.User.Delete)]
         public async Task<ApiResult<bool>> Delete(Guid id)
         {
             return ApiResult<bool>.GetSuccess(await userService.DeleteAsync(id));
@@ -86,7 +86,7 @@ namespace SolutionName.HttpApi.Host.Controllers.Systems
         /// <param name="inputDto"></param>
         /// <returns></returns>
         [HttpPost]
-        [IdentifierAuthorize(SolutionNameConsts.PermissionCodes.UserStatus)]
+        [IdentifierAuthorize(PermissionCodes.User.Status)]
         public async Task<ApiResult<bool>> UpdateStatus(UpdateStatusInputDto inputDto)
         {
             return ApiResult<bool>.GetSuccess(await userService.UpdateStatusAsync(inputDto));

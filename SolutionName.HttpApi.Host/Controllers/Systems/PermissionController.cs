@@ -27,7 +27,7 @@ namespace SolutionName.HttpApi.Host.Controllers.Systems
         /// <param name="status">状态:1表示可用的权限</param>
         /// <returns></returns>
         [HttpGet]
-        [IdentifierAuthorize(SolutionNameConsts.PermissionCodes.PermissionList)]
+        [IdentifierAuthorize(PermissionCodes.PermissionManage.List)]
         public async Task<ApiResult<List<GetAllListOutputDto>>> GetAllList(string? name, string? code, PermissionType? type, RecordStatus? status)
         {
             return ApiResult<List<GetAllListOutputDto>>.GetSuccess(await permissionService.GetAllListAsync(name, code, type, status));
@@ -39,7 +39,7 @@ namespace SolutionName.HttpApi.Host.Controllers.Systems
         /// <param name="id">权限Id</param>
         /// <returns></returns>
         [HttpGet]
-        [IdentifierAuthorize(SolutionNameConsts.PermissionCodes.PermissionDetail)]
+        [IdentifierAuthorize(PermissionCodes.PermissionManage.Detail)]
         public async Task<ApiResult<GetDetailOutputDto>> GetDetail(Guid id)
         {
             return ApiResult<GetDetailOutputDto>.GetSuccess(await permissionService.GetDetailAsync(id));
@@ -51,7 +51,7 @@ namespace SolutionName.HttpApi.Host.Controllers.Systems
         /// <param name="inputDto"></param>
         /// <returns></returns>
         [HttpPost]
-        [IdentifierAuthorize(SolutionNameConsts.PermissionCodes.PermissionCreate)]
+        [IdentifierAuthorize(PermissionCodes.PermissionManage.Create)]
         public async Task<ApiResult<bool>> Create(CreateInputDto inputDto)
         {
             return ApiResult<bool>.GetSuccess(await permissionService.CreateAsync(inputDto));
@@ -63,7 +63,7 @@ namespace SolutionName.HttpApi.Host.Controllers.Systems
         /// <param name="inputDto"></param>
         /// <returns></returns>
         [HttpPost]
-        [IdentifierAuthorize(SolutionNameConsts.PermissionCodes.PermissionUpdate)]
+        [IdentifierAuthorize(PermissionCodes.PermissionManage.Update)]
         public async Task<ApiResult<bool>> Update(UpdateInputDto inputDto)
         {
             return ApiResult<bool>.GetSuccess(await permissionService.UpdateAsync(inputDto));
@@ -75,7 +75,7 @@ namespace SolutionName.HttpApi.Host.Controllers.Systems
         /// <param name="id">权限Id</param>
         /// <returns></returns>
         [HttpDelete]
-        [IdentifierAuthorize(SolutionNameConsts.PermissionCodes.PermissionDelete)]
+        [IdentifierAuthorize(PermissionCodes.PermissionManage.Delete)]
         public async Task<ApiResult<bool>> Delete(Guid id)
         {
             return ApiResult<bool>.GetSuccess(await permissionService.DeleteAsync(id));
@@ -87,7 +87,7 @@ namespace SolutionName.HttpApi.Host.Controllers.Systems
         /// <param name="inputDto"></param>
         /// <returns></returns>
         [HttpPost]
-        [IdentifierAuthorize(SolutionNameConsts.PermissionCodes.PermissionStatus)]
+        [IdentifierAuthorize(PermissionCodes.PermissionManage.Status)]
         public async Task<ApiResult<bool>> UpdateStatus(UpdateStatusInputDto inputDto)
         {
             return ApiResult<bool>.GetSuccess(await permissionService.UpdateStatusAsync(inputDto));

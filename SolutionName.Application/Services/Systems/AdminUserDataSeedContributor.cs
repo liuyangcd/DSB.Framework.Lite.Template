@@ -46,13 +46,13 @@ namespace SolutionName.Application.Services.Systems
         /// <returns></returns>
         private async Task<SystemRoleEntity> EnsureAdminRoleAsync(List<Guid> allPermissionIds)
         {
-            var adminRole = await roleRepository.GetSingleAsync(x => x.Code == SolutionNameConsts.RoleCodes.AdminRole);
+            var adminRole = await roleRepository.GetSingleAsync(x => x.Code == RoleCodes.AdminRole);
             if (adminRole is null)
             {
                 adminRole = new SystemRoleEntity
                 {
                     Id = guidGenerator.Create(),
-                    Code = SolutionNameConsts.RoleCodes.AdminRole,
+                    Code = RoleCodes.AdminRole,
                     Name = "管理员",
                     Status = RecordStatus.Normally
                 };
