@@ -63,7 +63,7 @@ namespace SolutionName.HttpApi.Host
 
                 #region 注册数据库EFCore模块
 
-                var efDbContextOptions = configuration.GetSection("EntityFrameworkCoreOptions").Get<EntityFrameworkCoreDbContextOptions>() ?? throw new ArgumentNullException("未找到数据库配置信息");
+                var efDbContextOptions = configuration.GetSection("EntityFrameworkCoreOptions").Get<EntityFrameworkCoreDbContextOptions>() ?? throw new InvalidOperationException("未找到数据库配置信息");
                 builder.Services.AddEntityFrameworkCoreModule(efDbContextOptions);
 
                 #endregion
@@ -99,7 +99,7 @@ namespace SolutionName.HttpApi.Host
 
                 #region 配置JWT授权和鉴权
 
-                var jwtSetting = configuration.GetSection("JwtBearerSetting").Get<JwtBearerSetting>() ?? throw new ArgumentNullException("未找到JWT配置信息");
+                var jwtSetting = configuration.GetSection("JwtBearerSetting").Get<JwtBearerSetting>() ?? throw new InvalidOperationException("未找到JWT配置信息");
                 builder.Services.AddJwtBearerAuthentication(setting =>
                 {
                     setting.Audience = jwtSetting.Audience;
@@ -165,7 +165,7 @@ namespace SolutionName.HttpApi.Host
 
                 #region 注册Hangfire服务
 
-                var hangfireOptions = configuration.GetSection("HangfireOptions").Get<HangfireOptions>() ?? throw new ArgumentNullException("未找到hangfire配置信息");
+                var hangfireOptions = configuration.GetSection("HangfireOptions").Get<HangfireOptions>() ?? throw new InvalidOperationException("未找到hangfire配置信息");
                 builder.Services.AddHangfireAndServer(hangfireOptions, jobServerOptions =>
                 {
                     // 使用Redis可以设置成1s，提高检测到取消任务的响应速度，默认是5s
