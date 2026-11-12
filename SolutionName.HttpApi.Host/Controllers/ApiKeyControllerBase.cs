@@ -6,6 +6,7 @@ namespace SolutionName.HttpApi.Host.Controllers
     /// <summary>
     /// 基于ApiKey验证的控制器基类
     /// </summary>
+    [ApiController]
     [Route("api/[controller]/[action]")]
     [ApiKeyAuthorization]
     public class ApiKeyControllerBase : ControllerBase
