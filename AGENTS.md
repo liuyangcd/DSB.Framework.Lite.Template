@@ -4,13 +4,16 @@
 
 ```pwsh
 # Run the app (from repo root)
-dotnet run --project .\SolutionName.HttpApi.Host\
+dotnet run --project .\src\SolutionName.HttpApi.Host\
 
 # Build the full solution
 dotnet build .\SolutionName.Backend.sln
+
+# Run tests
+dotnet test .\tests\SolutionName.Tests\SolutionName.Tests.csproj
 ```
 
-No test project exists in this repo.
+Tests live in `tests/SolutionName.Tests` and use xUnit v3.
 
 ## EF Core Migrations
 
@@ -18,25 +21,25 @@ Run all EF commands from the **DbMigrations project**, NOT the Host project:
 
 ```pwsh
 # Add a migration
-dotnet ef migrations add <Name> --project .\SolutionName.EntityFrameworkCore.DbMigrations\ --startup-project .\SolutionName.EntityFrameworkCore.DbMigrations\
+dotnet ef migrations add <Name> --project .\src\SolutionName.EntityFrameworkCore.DbMigrations\ --startup-project .\src\SolutionName.EntityFrameworkCore.DbMigrations\
 
 # Remove last migration
-dotnet ef migrations remove --project .\SolutionName.EntityFrameworkCore.DbMigrations\ --startup-project .\SolutionName.EntityFrameworkCore.DbMigrations\
+dotnet ef migrations remove --project .\src\SolutionName.EntityFrameworkCore.DbMigrations\ --startup-project .\src\SolutionName.EntityFrameworkCore.DbMigrations\
 
 # Update database
-dotnet ef database update --project .\SolutionName.EntityFrameworkCore.DbMigrations\ --startup-project .\SolutionName.EntityFrameworkCore.DbMigrations\
+dotnet ef database update --project .\src\SolutionName.EntityFrameworkCore.DbMigrations\ --startup-project .\src\SolutionName.EntityFrameworkCore.DbMigrations\
 
 # Generate idempotent SQL script
-dotnet ef migrations script -i -o .\script.sql --project .\SolutionName.EntityFrameworkCore.DbMigrations\ --startup-project .\SolutionName.EntityFrameworkCore.DbMigrations\
+dotnet ef migrations script -i -o .\script.sql --project .\src\SolutionName.EntityFrameworkCore.DbMigrations\ --startup-project .\src\SolutionName.EntityFrameworkCore.DbMigrations\
 ```
 
-The `dotnet-ef` local tool is version 9.0.8 (configured in `.config/dotnet-tools.json`) but the project uses EF Core 8.0.26. The Migration.txt doc says the tool version must match the EF Core version. If `dotnet ef` fails, install the matching tool version.
+The `dotnet-ef` local tool is version 9.0.8 (configured in `src/SolutionName.HttpApi.Host/.config/dotnet-tools.json`) but the project uses EF Core 8.x. The Migration.txt doc says the tool version must match the EF Core version. If `dotnet ef` fails, install the matching tool version.
 
 The DbMigrations project has its own `appsettings.json` with a DB connection string used at design-time. The `DesignTimeSolutionNameContextFactory` reads this config.
 
 ## Architecture
 
-ASP.NET Core 8 layered solution with 6 projects:
+ASP.NET Core 8 layered solution with 6 source projects plus a test project:
 
 | Project | Purpose |
 |---|---|
@@ -46,6 +49,9 @@ ASP.NET Core 8 layered solution with 6 projects:
 | `Domain` | Entities, enums (e.g. `RecordStatus`), option classes |
 | `EntityFrameworkCore` | DbContext, repository impls, repository interfaces |
 | `EntityFrameworkCore.DbMigrations` | EF Core migrations (design-time only) |
+| `Tests` | xUnit v3 unit tests under `tests/SolutionName.Tests` |
+
+Source projects live under `src/`; test projects live under `tests/`.
 
 Dependency chain: `HttpApi.Host` -> `Application` -> `Application.Contracts` -> `EntityFrameworkCore` -> `Domain`
 

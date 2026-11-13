@@ -37,8 +37,15 @@ namespace SolutionName.Domain.Options
         /// <returns></returns>
         public bool IsSupport(string fileName)
         {
-            var fileExtentsion = Path.GetExtension(fileName)?.ToLower();
-            return FileTypeOptions?.Values.SelectMany(x => x.Extensions.Split(',', StringSplitOptions.RemoveEmptyEntries)).Contains(fileExtentsion, StringComparer.OrdinalIgnoreCase) ?? false;
+            var fileExtension = Path.GetExtension(fileName);
+            if (string.IsNullOrEmpty(fileExtension))
+            {
+                return false;
+            }
+
+            return FileTypeOptions?.Values
+                .SelectMany(x => x.Extensions?.Split(',', StringSplitOptions.RemoveEmptyEntries) ?? Array.Empty<string>())
+                .Contains(fileExtension, StringComparer.OrdinalIgnoreCase) ?? false;
         }
 
         /// <summary>
@@ -48,8 +55,22 @@ namespace SolutionName.Domain.Options
         /// <returns></returns>
         public KeyValuePair<UploadFileType, FileTypeOptions>? GetOptions(string fileName)
         {
-            var fileExtentsion = Path.GetExtension(fileName)?.ToLower();
-            return FileTypeOptions?.FirstOrDefault(x => x.Value.Extensions?.ToLower().Split(',', StringSplitOptions.RemoveEmptyEntries).Contains(fileExtentsion) ?? false) ?? null;
+            var fileExtension = Path.GetExtension(fileName);
+            if (string.IsNullOrEmpty(fileExtension) || FileTypeOptions is null)
+            {
+                return null;
+            }
+
+            foreach (var item in FileTypeOptions)
+            {
+                var extensions = item.Value.Extensions?.Split(',', StringSplitOptions.RemoveEmptyEntries);
+                if (extensions?.Contains(fileExtension, StringComparer.OrdinalIgnoreCase) == true)
+                {
+                    return item;
+                }
+            }
+
+            return null;
         }
     }
 

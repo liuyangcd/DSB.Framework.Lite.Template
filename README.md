@@ -1,6 +1,6 @@
 # DSB.Framework.Lite.Template
 
-基于 `DSB.Framework.Lite` 实现的 ASP.NET Core 8 解决方案模板。`SolutionName.HttpApi.Host` 是 Web API 入口项目，负责承载控制器、认证授权、全局过滤器、Swagger、Hangfire 仪表盘和静态/文件下载等 HTTP 相关能力；业务逻辑位于 `SolutionName.Application`，数据访问位于 `SolutionName.EntityFrameworkCore`。
+基于 `DSB.Framework.Lite` 实现的 ASP.NET Core 8 解决方案模板。`src/SolutionName.HttpApi.Host` 是 Web API 入口项目，负责承载控制器、认证授权、全局过滤器、Swagger、Hangfire 仪表盘和静态/文件下载等 HTTP 相关能力；业务逻辑位于 `SolutionName.Application`，数据访问位于 `SolutionName.EntityFrameworkCore`。
 
 > 本 README 面向日常开发，重点说明 **DSB.Framework.Lite 在本项目中的用法** 和 **编码规范**。更完整的框架 API 说明见各 NuGet 包自带的 readme，同目录的 `AGENTS.md` 也记录了构建、迁移和工作单元约定。
 
@@ -14,16 +14,19 @@
 | `SolutionName.EntityFrameworkCore` | DbContext、仓储接口与实现、查询 |
 | `SolutionName.Domain` | 实体、枚举、权限码/角色码、Options |
 | `SolutionName.EntityFrameworkCore.DbMigrations` | EF Core 迁移（设计时项目） |
+| `tests/SolutionName.Tests` | 单元测试（xUnit v3） |
 
-`SolutionName.HttpApi.Host` 内部结构：
+源码项目统一放在 `src/`，测试项目放在 `tests/`。
+
+`src/SolutionName.HttpApi.Host` 内部结构：
 
 | 关注点 | 所在位置 |
 | --- | --- |
-| 程序入口、DI 注册、中间件管道 | `SolutionName.HttpApi.Host/Program.cs` |
-| 控制器与控制器基类 | `SolutionName.HttpApi.Host/Controllers/` |
-| Swagger 模块分组 | `SolutionName.HttpApi.Host/ModuleEnum.cs` |
-| 运行配置 | `SolutionName.HttpApi.Host/appsettings*.json` |
-| 证书与 Docker | `SolutionName.HttpApi.Host/Certs/`、`SolutionName.HttpApi.Host/Dockerfile`、`SolutionName.HttpApi.Host/Dockerfile.Https`、`SolutionName.HttpApi.Host/docker.txt` |
+| 程序入口、DI 注册、中间件管道 | `src/SolutionName.HttpApi.Host/Program.cs` |
+| 控制器与控制器基类 | `src/SolutionName.HttpApi.Host/Controllers/` |
+| Swagger 模块分组 | `src/SolutionName.HttpApi.Host/ModuleEnum.cs` |
+| 运行配置 | `src/SolutionName.HttpApi.Host/appsettings*.json` |
+| 证书与 Docker | `src/SolutionName.HttpApi.Host/Certs/`、`src/SolutionName.HttpApi.Host/Dockerfile`、`src/SolutionName.HttpApi.Host/Dockerfile.Https`、`src/SolutionName.HttpApi.Host/docker.txt` |
 
 项目依赖链：
 
@@ -54,7 +57,7 @@ SolutionName.HttpApi.Host
 
 ### 2.2 配置
 
-开发环境配置在 `SolutionName.HttpApi.Host/appsettings.Development.json`。启动前至少确认：
+开发环境配置在 `src/SolutionName.HttpApi.Host/appsettings.Development.json`。启动前至少确认：
 
 | 配置节 | 作用 | 关键点 |
 | --- | --- | --- |
@@ -67,7 +70,7 @@ SolutionName.HttpApi.Host
 | `FileUploadOptions` | 上传 | 全局大小上限、保存目录、各类型扩展名与大小限制 |
 | `HttpClientOptions` | 出站 HttpClient | 按名称配置 BaseAddress、是否忽略 SSL 等 |
 
-> `SolutionName.HttpApi.Host/appsettings.Staging.json` 和 `SolutionName.HttpApi.Host/appsettings.Production.json` 默认是空对象。部署时必须通过环境变量、配置中心或密钥管理补充配置，不要把生产密钥写进仓库。
+> `src/SolutionName.HttpApi.Host/appsettings.Staging.json` 和 `src/SolutionName.HttpApi.Host/appsettings.Production.json` 默认是空对象。部署时必须通过环境变量、配置中心或密钥管理补充配置，不要把生产密钥写进仓库。
 
 ### 2.3 运行
 
@@ -76,23 +79,40 @@ SolutionName.HttpApi.Host
 dotnet build ./SolutionName.Backend.sln
 
 # 启动 API
-dotnet run --project ./SolutionName.HttpApi.Host
+dotnet run --project ./src/SolutionName.HttpApi.Host
 ```
 
 启动后会执行数据种子：
 
-- 自动补齐缺失的权限数据（`SolutionName.Application/Services/Systems/PermissionDataSeedContributor.cs`）。
+- 自动补齐缺失的权限数据（`src/SolutionName.Application/Services/Systems/PermissionDataSeedContributor.cs`）。
 - 确保存在管理员角色，并把全部权限授予该角色（`AdminUserDataSeedContributor`）。
 - 确保存在管理员账号，模板默认账号为 `admin`，密码为 `123456`。**部署后请立即修改。**
 - 种子服务通过 `IUnitOfWorkProvider` 创建独立作用域并在最后统一保存。
 
 健康检查终结点为 `/`。Swagger UI 仅在非 Production 环境启用。
 
-### 2.4 Docker
+### 2.4 测试
 
-在 `SolutionName.HttpApi.Host` 目录下构建 HTTPS 镜像：
+测试工程位于 `tests/SolutionName.Tests`，使用 xUnit v3：
 
 ```bash
+# 运行测试工程
+dotnet test ./tests/SolutionName.Tests/SolutionName.Tests.csproj
+
+# 或通过解决方案运行全部测试
+dotnet test ./SolutionName.Backend.sln
+```
+
+新增测试时，在 `tests/SolutionName.Tests` 下按被测模块建文件夹；需要访问 Application/Domain 类型时，在测试工程中添加对应的 `ProjectReference`。
+
+### 2.5 Docker
+
+先发布到 `./publish/Production`，复制 Dockerfile 后构建（完整部署说明见 [DEPLOYMENT.md](src/SolutionName.HttpApi.Host/DEPLOYMENT.md)）：
+
+```bash
+dotnet publish ./src/SolutionName.HttpApi.Host/SolutionName.HttpApi.Host.csproj -c Release -o ./publish/Production
+cp ./src/SolutionName.HttpApi.Host/Dockerfile.Https ./publish/Production/
+cd ./publish/Production
 docker build -t solutionname.httpapi.host:v1 -f ./Dockerfile.Https .
 ```
 
@@ -108,13 +128,11 @@ docker run -d -p 8090:8080 -p 8091:8081 \
   solutionname.httpapi.host:v1
 ```
 
-完整的 Windows IIS / Linux Docker 部署步骤、生产配置、Nginx 和迁移说明见 [DEPLOYMENT.md](SolutionName.HttpApi.Host/DEPLOYMENT.md)。
-
 ## 3. 启动流程
 
 ### 3.1 服务注册顺序
 
-`SolutionName.HttpApi.Host/Program.cs` 中的注册顺序如下：
+`src/SolutionName.HttpApi.Host/Program.cs` 中的注册顺序如下：
 
 1. **Serilog**：控制台（仅 DEBUG）+ 按天滚动文件日志。
 2. **EF Core 模块**：`AddEntityFrameworkCoreModule` 注册 `SolutionNameContext`、Guid 生成器和仓储。
@@ -187,7 +205,7 @@ GlobalExceptionMiddleware
 
 基类已经包含 `[ApiController]` 和 `[Route("api/[controller]/[action]")]`，所以派生控制器不需要重复标注。路由示例：`UserController.GetPageList` -> `/api/User/GetPageList`。
 
-推荐写法（`SolutionName.HttpApi.Host/Controllers/Systems/UserController.cs`）：
+推荐写法（`src/SolutionName.HttpApi.Host/Controllers/Systems/UserController.cs`）：
 
 ```csharp
 [ApiExplorer(ModuleEnum.User)]
@@ -316,7 +334,7 @@ public async Task<ApiResult<bool>> Create(CreateInputDto inputDto)
 }
 ```
 
-权限码统一放在 `SolutionName.Domain/PermissionCodes.cs`，按「目录 -> 菜单 -> 接口」组织：
+权限码统一放在 `src/SolutionName.Domain/PermissionCodes.cs`，按「目录 -> 菜单 -> 接口」组织：
 
 ```csharp
 public static class PermissionCodes
@@ -334,7 +352,7 @@ public static class PermissionCodes
 }
 ```
 
-鉴权回调在 `SolutionName.HttpApi.Host/Program.cs` 注册：从 JWT 中取 `Id` 和 `UserType`，再从 `UserPermissionStorage` 读取该用户的权限码集合，交给 `requirement.Check(userCodes)` 判断。
+鉴权回调在 `src/SolutionName.HttpApi.Host/Program.cs` 注册：从 JWT 中取 `Id` 和 `UserType`，再从 `UserPermissionStorage` 读取该用户的权限码集合，交给 `requirement.Check(userCodes)` 判断。
 
 注意：
 
@@ -421,7 +439,7 @@ public class CycleJob(
 }
 ```
 
-参考：`SolutionName.Application/BackgroundJobs/Jobs/CycleJob.cs`、`SolutionName.Application/BackgroundJobs/Jobs/OneTimeJob.cs`。
+参考：`src/SolutionName.Application/BackgroundJobs/Jobs/CycleJob.cs`、`src/SolutionName.Application/BackgroundJobs/Jobs/OneTimeJob.cs`。
 
 #### 规则 3：API 内新开线程 / fire-and-forget，使用 IUnitOfWorkProvider
 
@@ -436,7 +454,7 @@ await repository.InsertAsync(entity);
 await uowScope.Current.SaveChangesAsync();
 ```
 
-参考：`SolutionName.Application/DataSeedHostedService.cs`。
+参考：`src/SolutionName.Application/DataSeedHostedService.cs`。
 
 #### 跳过自动提交与事务
 
@@ -639,7 +657,7 @@ public class OneTimeJob(
 }
 ```
 
-- 任务必须继承 `BackgroundJobBase` 或 `BackgroundJobBase<T>`，放在 `SolutionName.Application/BackgroundJobs/Jobs`。
+- 任务必须继承 `BackgroundJobBase` 或 `BackgroundJobBase<T>`，放在 `src/SolutionName.Application/BackgroundJobs/Jobs`。
 - `CancellationToken` 固定作为最后一个参数传入，Hangfire 会自动构建；所有异步调用都要传播 `ct`。
 - 捕获 `OperationCanceledException` 做优雅退出，循环中可用 `ct.ThrowIfCancellationRequested()`。
 - `[JobDisplayName]` 让仪表盘显示可读名称。
@@ -662,7 +680,7 @@ public class OneTimeJob(
 }
 ```
 
-`SolutionName.HttpApi.Host/Program.cs` 会把 `FileMaxSize` 同步到 Kestrel、IIS 和 `FormOptions.MultipartBodyLengthLimit`。上传实现位于 `SolutionName.Application/Services/Systems/UploadFileService.cs`：
+`src/SolutionName.HttpApi.Host/Program.cs` 会把 `FileMaxSize` 同步到 Kestrel、IIS 和 `FormOptions.MultipartBodyLengthLimit`。上传实现位于 `src/SolutionName.Application/Services/Systems/UploadFileService.cs`：
 
 - 文件保存到 `AppContext.BaseDirectory/SavePath/yyyyMM/dd/{fileId}{ext}`。
 - 上传接口标 `[RequestLogIgnore]`，避免日志记录文件流。
@@ -791,7 +809,7 @@ public RecordStatus Status { get; set; } = RecordStatus.Normally;
   原因：EF Core 的哨兵值机制会导致 Insert 语句包含所有字段，数据库默认值可能不生效，且容易出现实体默认值与数据库默认值不一致。
 
 - 业务状态用 `RecordStatus`（`Disabled = 0`、`Normally = 1`）；逻辑删除用继承的 `EntityStatus`，两者不要混用。
-- 索引、唯一约束、逻辑删除全局过滤器在 `SolutionName.EntityFrameworkCore/SolutionNameContext.cs` 的 `OnModelCreating` 中配置。
+- 索引、唯一约束、逻辑删除全局过滤器在 `src/SolutionName.EntityFrameworkCore/SolutionNameContext.cs` 的 `OnModelCreating` 中配置。
 
 ### 5.7 仓储规范
 
@@ -854,7 +872,7 @@ await userRepository.UpdateAsync(user);
 
 ### 5.12 配置与安全
 
-- 开发配置放 `SolutionName.HttpApi.Host/appsettings.Development.json`，生产配置通过环境变量/配置中心注入。
+- 开发配置放 `src/SolutionName.HttpApi.Host/appsettings.Development.json`，生产配置通过环境变量/配置中心注入。
 - JWT 密钥、加密接口密钥、数据库密码、Redis 密码不要提交到仓库。
 - 生产环境关闭 Swagger 和请求日志（当前代码已按环境判断）。
 - CORS 的 `Hosts` 不要使用 `*`，按实际前端域名配置。
@@ -866,7 +884,7 @@ await userRepository.UpdateAsync(user);
 
 1. **Domain**
    - 新建 `SystemOrderEntity : EntityBase<Guid>`，属性加 DataAnnotations，状态默认值写在实体上。
-   - 如有枚举，放 `SolutionName.Domain/Enums`。
+   - 如有枚举，放 `src/SolutionName.Domain/Enums`。
    - 在 `PermissionCodes` 增加 `system:order`、`order:page`、`order:create` 等常量。
 2. **EntityFrameworkCore**
    - `SolutionNameContext` 增加 `DbSet<SystemOrderEntity>`。
@@ -884,7 +902,7 @@ await userRepository.UpdateAsync(user);
    - 新建 `OrderController : ManagerControllerBase`，标 `[ApiExplorer(ModuleEnum.Order)]`。
    - 每个 Action 标 `[IdentifierAuthorize(PermissionCodes.Order.X)]`，返回 `ApiResult<T>`。
 6. **权限种子**
-   - 在 `SolutionName.Application/Services/Systems/PermissionDataSeedContributor.cs` 的 `GetSeedPermissions` 中增加目录/菜单/接口权限记录，否则管理员角色不会自动获得新权限。
+   - 在 `src/SolutionName.Application/Services/Systems/PermissionDataSeedContributor.cs` 的 `GetSeedPermissions` 中增加目录/菜单/接口权限记录，否则管理员角色不会自动获得新权限。
 7. **验证**
    - `dotnet build ./SolutionName.Backend.sln`
    - 启动后检查 Swagger 分组、登录、权限校验、分页和逻辑删除。
@@ -897,21 +915,21 @@ await userRepository.UpdateAsync(user);
 ```bash
 # 新增迁移
 dotnet ef migrations add <Name> \
-  --project ./SolutionName.EntityFrameworkCore.DbMigrations/ \
-  --startup-project ./SolutionName.EntityFrameworkCore.DbMigrations/
+  --project ./src/SolutionName.EntityFrameworkCore.DbMigrations/ \
+  --startup-project ./src/SolutionName.EntityFrameworkCore.DbMigrations/
 
 # 更新数据库
 dotnet ef database update \
-  --project ./SolutionName.EntityFrameworkCore.DbMigrations/ \
-  --startup-project ./SolutionName.EntityFrameworkCore.DbMigrations/
+  --project ./src/SolutionName.EntityFrameworkCore.DbMigrations/ \
+  --startup-project ./src/SolutionName.EntityFrameworkCore.DbMigrations/
 
 # 生成幂等 SQL 脚本
 dotnet ef migrations script -i -o ./script.sql \
-  --project ./SolutionName.EntityFrameworkCore.DbMigrations/ \
-  --startup-project ./SolutionName.EntityFrameworkCore.DbMigrations/
+  --project ./src/SolutionName.EntityFrameworkCore.DbMigrations/ \
+  --startup-project ./src/SolutionName.EntityFrameworkCore.DbMigrations/
 ```
 
-`SolutionName.HttpApi.Host/.config/dotnet-tools.json` 中的 `dotnet-ef` 是 9.0.8，而项目使用 EF Core 8.x。如果命令报版本不兼容，安装与 EF Core 匹配的工具版本。
+`src/SolutionName.HttpApi.Host/.config/dotnet-tools.json` 中的 `dotnet-ef` 是 9.0.8，而项目使用 EF Core 8.x。如果命令报版本不兼容，安装与 EF Core 匹配的工具版本。
 
 ## 7. 常见问题
 

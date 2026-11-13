@@ -1,6 +1,6 @@
 # 部署文档
 
-本文档说明 `SolutionName.HttpApi.Host` 的两种部署方式：
+本文档说明 `src/SolutionName.HttpApi.Host` 的两种部署方式：
 
 - **Windows IIS 服务器部署**：适用于 Windows Server / 内网服务器，使用 IIS + ASP.NET Core Hosting Bundle。
 - **Linux Docker 容器部署**：适用于 Linux 服务器，使用 Docker 运行，可直连 HTTPS 或由 Nginx 终止 TLS。
@@ -60,28 +60,28 @@ JwtBearerSetting__SecurityKey=***
 
 **方式一：在开发机或构建机执行**
 
-修改 `SolutionName.EntityFrameworkCore.DbMigrations/appsettings.json` 中的连接串，然后从仓库根目录执行：
+修改 `src/SolutionName.EntityFrameworkCore.DbMigrations/appsettings.json` 中的连接串，然后从仓库根目录执行：
 
 ```bash
 dotnet ef database update \
-  --project ./SolutionName.EntityFrameworkCore.DbMigrations/ \
-  --startup-project ./SolutionName.EntityFrameworkCore.DbMigrations/
+  --project ./src/SolutionName.EntityFrameworkCore.DbMigrations/ \
+  --startup-project ./src/SolutionName.EntityFrameworkCore.DbMigrations/
 ```
 
 **方式二：生成幂等 SQL 脚本，交给 DBA 执行（推荐生产）**
 
 ```bash
 dotnet ef migrations script -i -o ./SQL/production.sql \
-  --project ./SolutionName.EntityFrameworkCore.DbMigrations/ \
-  --startup-project ./SolutionName.EntityFrameworkCore.DbMigrations/
+  --project ./src/SolutionName.EntityFrameworkCore.DbMigrations/ \
+  --startup-project ./src/SolutionName.EntityFrameworkCore.DbMigrations/
 ```
 
 **方式三：生成迁移可执行文件**
 
 ```bash
 dotnet ef migrations bundle \
-  --project ./SolutionName.EntityFrameworkCore.DbMigrations/ \
-  --startup-project ./SolutionName.EntityFrameworkCore.DbMigrations/ \
+  --project ./src/SolutionName.EntityFrameworkCore.DbMigrations/ \
+  --startup-project ./src/SolutionName.EntityFrameworkCore.DbMigrations/ \
   -o ./efbundle
 ```
 
@@ -134,19 +134,19 @@ net start w3svc
 
 ### 2.2 发布应用
 
-在开发机或构建机执行：
+在开发机或构建机的仓库根目录执行：
 
 ```powershell
-dotnet publish .\SolutionName.HttpApi.Host\SolutionName.HttpApi.Host.csproj -c Release -o .\publish\Production
+dotnet publish .\src\SolutionName.HttpApi.Host\SolutionName.HttpApi.Host.csproj -c Release -o .\publish\Production
 ```
 
 也可以使用仓库中的发布配置：
 
 ```powershell
-dotnet publish .\SolutionName.HttpApi.Host\SolutionName.HttpApi.Host.csproj -c Release -p:PublishProfile=Production
+dotnet publish .\src\SolutionName.HttpApi.Host\SolutionName.HttpApi.Host.csproj -c Release -p:PublishProfile=Production
 ```
 
-发布配置的输出目录是 `SolutionName.HttpApi.Host/bin/Release/net8.0/publish/Production`。
+发布配置的输出目录是 `src/SolutionName.HttpApi.Host/bin/Release/net8.0/publish/Production`。
 
 发布后检查：
 
@@ -314,11 +314,11 @@ docker compose version
 
 ```bash
 # 1. 在仓库根目录发布
-dotnet publish ./SolutionName.HttpApi.Host/SolutionName.HttpApi.Host.csproj \
+dotnet publish ./src/SolutionName.HttpApi.Host/SolutionName.HttpApi.Host.csproj \
   -c Release -o ./publish/Production
 
 # 2. 把 Dockerfile 放进发布目录（如果发布输出没有自动带上）
-cp ./SolutionName.HttpApi.Host/Dockerfile.Https ./publish/Production/
+cp ./src/SolutionName.HttpApi.Host/Dockerfile.Https ./publish/Production/
 
 # 3. 构建镜像
 cd ./publish/Production
@@ -340,18 +340,18 @@ docker build -t solutionname-api:1.0.0 -f ./Dockerfile.Https .
 ```dockerfile
 # syntax=docker/dockerfile:1
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /src
+WORKDIR /repo
 
 # 先复制 csproj，利用 NuGet 缓存
-COPY SolutionName.HttpApi.Host/SolutionName.HttpApi.Host.csproj SolutionName.HttpApi.Host/
-COPY SolutionName.Application/SolutionName.Application.csproj SolutionName.Application/
-COPY SolutionName.Application.Contracts/SolutionName.Application.Contracts.csproj SolutionName.Application.Contracts/
-COPY SolutionName.EntityFrameworkCore/SolutionName.EntityFrameworkCore.csproj SolutionName.EntityFrameworkCore/
-COPY SolutionName.Domain/SolutionName.Domain.csproj SolutionName.Domain/
-RUN dotnet restore SolutionName.HttpApi.Host/SolutionName.HttpApi.Host.csproj
+COPY src/SolutionName.HttpApi.Host/SolutionName.HttpApi.Host.csproj src/SolutionName.HttpApi.Host/
+COPY src/SolutionName.Application/SolutionName.Application.csproj src/SolutionName.Application/
+COPY src/SolutionName.Application.Contracts/SolutionName.Application.Contracts.csproj src/SolutionName.Application.Contracts/
+COPY src/SolutionName.EntityFrameworkCore/SolutionName.EntityFrameworkCore.csproj src/SolutionName.EntityFrameworkCore/
+COPY src/SolutionName.Domain/SolutionName.Domain.csproj src/SolutionName.Domain/
+RUN dotnet restore src/SolutionName.HttpApi.Host/SolutionName.HttpApi.Host.csproj
 
 COPY . .
-RUN dotnet publish SolutionName.HttpApi.Host/SolutionName.HttpApi.Host.csproj \
+RUN dotnet publish src/SolutionName.HttpApi.Host/SolutionName.HttpApi.Host.csproj \
     -c Release -o /app/publish /p:UseAppHost=false
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
@@ -377,6 +377,7 @@ docker build -f ./Dockerfile.Production -t solutionname-api:1.0.0 .
 **/bin
 **/obj
 publish/
+tests/
 **/logs
 **/UploadFiles
 .git
