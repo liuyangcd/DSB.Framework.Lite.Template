@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/SolutionName.Application.Contracts/SolutionName.Application.Contracts.csproj" />
+    <Project Path="src/SolutionName.Application/SolutionName.Application.csproj" />
+    <Project Path="src/SolutionName.Domain/SolutionName.Domain.csproj" />
+    <Project Path="src/SolutionName.EntityFrameworkCore.DbMigrations/SolutionName.EntityFrameworkCore.DbMigrations.csproj" />
+    <Project Path="src/SolutionName.EntityFrameworkCore/SolutionName.EntityFrameworkCore.csproj" />
+    <Project Path="src/SolutionName.HttpApi.Host/SolutionName.HttpApi.Host.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/SolutionName.Tests/SolutionName.Tests.csproj" />
+  </Folder>
+</Solution>

@@ -7,7 +7,7 @@
 dotnet run --project .\src\SolutionName.HttpApi.Host\
 
 # Build the full solution
-dotnet build .\SolutionName.Backend.sln
+dotnet build .\SolutionName.Backend.slnx
 
 # Run tests
 dotnet test .\tests\SolutionName.Tests\SolutionName.Tests.csproj

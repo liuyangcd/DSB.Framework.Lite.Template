@@ -50,7 +50,7 @@ SolutionName.HttpApi.Host
 
 ### 2.1 环境要求
 
-- .NET 8 SDK
+- .NET 8 SDK（项目目标框架为 net8.0；构建 `.slnx` 解决方案需 .NET SDK 9.0.200+ 或 Visual Studio 2022 17.13+）
 - MySQL（模板默认）或其他受支持数据库：SqlServer / MySql / PostgreSQL / Oracle
 - Redis（缓存、分布式锁、验证码、Hangfire、接口加密配置均依赖）
 - `dotnet-ef` 工具（仅执行迁移时需要）
@@ -76,7 +76,7 @@ SolutionName.HttpApi.Host
 
 ```bash
 # 还原并构建整个解决方案
-dotnet build ./SolutionName.Backend.sln
+dotnet build ./SolutionName.Backend.slnx
 
 # 启动 API
 dotnet run --project ./src/SolutionName.HttpApi.Host
@@ -100,7 +100,7 @@ dotnet run --project ./src/SolutionName.HttpApi.Host
 dotnet test ./tests/SolutionName.Tests/SolutionName.Tests.csproj
 
 # 或通过解决方案运行全部测试
-dotnet test ./SolutionName.Backend.sln
+dotnet test ./SolutionName.Backend.slnx
 ```
 
 集成测试位于 `tests/SolutionName.Tests/Integration`，使用 SQLite 内存数据库搭建真实的 DbContext、仓储和服务，不依赖 MySQL/Redis。新增测试时，在 `tests/SolutionName.Tests` 下按被测模块建文件夹；需要访问 Application/Domain 类型时，在测试工程中添加对应的 `ProjectReference`。
@@ -904,7 +904,7 @@ await userRepository.UpdateAsync(user);
 6. **权限种子**
    - 在 `src/SolutionName.Application/Services/Systems/PermissionDataSeedContributor.cs` 的 `GetSeedPermissions` 中增加目录/菜单/接口权限记录，否则管理员角色不会自动获得新权限。
 7. **验证**
-   - `dotnet build ./SolutionName.Backend.sln`
+   - `dotnet build ./SolutionName.Backend.slnx`
    - 启动后检查 Swagger 分组、登录、权限校验、分页和逻辑删除。
    - 如果新增后台任务，确认任务类继承 `BackgroundJobBase` 并在管道外手动保存。
 
