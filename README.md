@@ -14,7 +14,7 @@
 | `SolutionName.EntityFrameworkCore` | DbContext、仓储接口与实现、查询 |
 | `SolutionName.Domain` | 实体、枚举、权限码/角色码、Options |
 | `SolutionName.EntityFrameworkCore.DbMigrations` | EF Core 迁移（设计时项目） |
-| `tests/SolutionName.Tests` | 单元测试（xUnit v3） |
+| `tests/SolutionName.Tests` | 单元测试与业务集成测试（xUnit v3） |
 
 源码项目统一放在 `src/`，测试项目放在 `tests/`。
 
@@ -93,7 +93,7 @@ dotnet run --project ./src/SolutionName.HttpApi.Host
 
 ### 2.4 测试
 
-测试工程位于 `tests/SolutionName.Tests`，使用 xUnit v3：
+测试工程位于 `tests/SolutionName.Tests`，使用 xUnit v3，包含单元测试和业务集成测试：
 
 ```bash
 # 运行测试工程
@@ -103,7 +103,7 @@ dotnet test ./tests/SolutionName.Tests/SolutionName.Tests.csproj
 dotnet test ./SolutionName.Backend.sln
 ```
 
-新增测试时，在 `tests/SolutionName.Tests` 下按被测模块建文件夹；需要访问 Application/Domain 类型时，在测试工程中添加对应的 `ProjectReference`。
+集成测试位于 `tests/SolutionName.Tests/Integration`，使用 SQLite 内存数据库搭建真实的 DbContext、仓储和服务，不依赖 MySQL/Redis。新增测试时，在 `tests/SolutionName.Tests` 下按被测模块建文件夹；需要访问 Application/Domain 类型时，在测试工程中添加对应的 `ProjectReference`。
 
 ### 2.5 Docker
 

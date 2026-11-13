@@ -13,7 +13,7 @@ dotnet build .\SolutionName.Backend.sln
 dotnet test .\tests\SolutionName.Tests\SolutionName.Tests.csproj
 ```
 
-Tests live in `tests/SolutionName.Tests` and use xUnit v3.
+Tests live in `tests/SolutionName.Tests` and use xUnit v3. Unit tests and SQLite in-memory business integration tests are included.
 
 ## EF Core Migrations
 
@@ -49,7 +49,7 @@ ASP.NET Core 8 layered solution with 6 source projects plus a test project:
 | `Domain` | Entities, enums (e.g. `RecordStatus`), option classes |
 | `EntityFrameworkCore` | DbContext, repository impls, repository interfaces |
 | `EntityFrameworkCore.DbMigrations` | EF Core migrations (design-time only) |
-| `Tests` | xUnit v3 unit tests under `tests/SolutionName.Tests` |
+| `Tests` | xUnit v3 unit tests and SQLite in-memory integration tests under `tests/SolutionName.Tests` |
 
 Source projects live under `src/`; test projects live under `tests/`.
 
