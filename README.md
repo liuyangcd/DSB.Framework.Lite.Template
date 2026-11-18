@@ -105,6 +105,8 @@ dotnet test ./SolutionName.Backend.slnx
 
 集成测试位于 `tests/SolutionName.Tests/Integration`，使用 SQLite 内存数据库搭建真实的 DbContext、仓储和服务，不依赖 MySQL/Redis。新增测试时，在 `tests/SolutionName.Tests` 下按被测模块建文件夹；需要访问 Application/Domain 类型时，在测试工程中添加对应的 `ProjectReference`。
 
+`tests/SolutionName.Tests/Integration/MySql` 下的测试直接连接开发环境 MySQL，用于验证 DSB 仓储的基础方法、工作单元、WebApi 自动提交过滤器与异常中断。连接信息读取自 `src/SolutionName.HttpApi.Host/appsettings.Development.json`，运行时会自动切换到独立的 `SolutionName_RepositoryTests` 测试库，并在每次运行前删除重建，不会污染开发库；运行前需确保 MySQL 服务可用。过滤器相关用例通过 ASP.NET Core TestServer 走真实 MVC 管道，不依赖 Redis。
+
 ### 2.5 Docker
 
 先发布到 `./publish/Production`，复制 Dockerfile 后构建（完整部署说明见 [DEPLOYMENT.md](src/SolutionName.HttpApi.Host/DEPLOYMENT.md)）：
