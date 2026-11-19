@@ -237,7 +237,11 @@ namespace SolutionName.HttpApi.Host
                 app.UseGlobalExceptionMiddleware();
 
                 // 添加健康检查终结点
-                app.UseHealthChecks(PathString.FromUriComponent("/"));
+                app.UseHealthChecks(PathString.FromUriComponent("/health"));
+
+                // 根路径默认路由：生产环境指向健康检查，非生产环境指向Swagger
+                var defaultRedirectPath = app.Environment.IsProduction() ? "/health" : "/swagger";
+                app.MapGet("/", () => Results.Redirect(defaultRedirectPath)).ExcludeFromDescription();
 
                 // Configure the HTTP request pipeline.
 

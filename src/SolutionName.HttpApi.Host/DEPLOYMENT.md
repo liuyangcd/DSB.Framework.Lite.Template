@@ -248,6 +248,9 @@ icacls "D:\Sites\SolutionName\UploadFiles" /grant "IIS AppPool\SolutionNamePool:
 
 ```powershell
 # 健康检查，正常返回 200 和 Healthy
+Invoke-WebRequest https://api.example.com/health -UseBasicParsing
+
+# 根路径在生产环境 302 重定向到 /health
 Invoke-WebRequest https://api.example.com/ -UseBasicParsing
 
 # 查看应用日志目录

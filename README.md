@@ -89,7 +89,7 @@ dotnet run --project ./src/SolutionName.HttpApi.Host
 - 确保存在管理员账号，模板默认账号为 `admin`，密码为 `123456`。**部署后请立即修改。**
 - 种子服务通过 `IUnitOfWorkProvider` 创建独立作用域并在最后统一保存。
 
-健康检查终结点为 `/`。Swagger UI 仅在非 Production 环境启用。
+健康检查终结点为 `/health`。根路径 `/` 按环境重定向：Production 指向 `/health`，非 Production 指向 `/swagger`。Swagger UI 仅在非 Production 环境启用。
 
 ### 2.4 测试
 
@@ -733,7 +733,7 @@ EncryptionApiOptionManager.Register(() =>
 
 ### 4.15 健康检查、转发头、CORS
 
-- 健康检查：`app.UseHealthChecks("/")`，用于容器/网关探活。
+- 健康检查：`app.UseHealthChecks("/health")`，用于容器/网关探活；根路径 `/` 在生产环境重定向到 `/health`，非生产环境重定向到 `/swagger`。
 - 转发头：`UseForwardedHeaders` 处理反向代理传来的 `X-Forwarded-For` / `X-Forwarded-Proto`，否则控制器里拿到的客户端 IP 可能是代理 IP。
 - CORS：通过 `CorsOptions` 配置；启用后允许配置的来源、任意请求头和任意方法，并允许携带凭据。生产环境不要把 `Hosts` 配成 `*`。
 
