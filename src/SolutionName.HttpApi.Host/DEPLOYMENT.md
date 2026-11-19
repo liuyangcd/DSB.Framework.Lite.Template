@@ -433,6 +433,14 @@ docker run -d --name solutionname-api \
 -e ASPNETCORE_Kestrel__Certificates__Default__Path=/https/your-cert.pfx
 ```
 
+四个挂载中，证书目录和配置文件末尾都带 `:ro`，日志和上传目录不带。原因：
+
+- **证书目录用 `:ro`**：Kestrel 只在启动时读取一次 PFX，运行期间不会写这个目录，只读不影响功能。加 `:ro` 后内核层面禁止容器写入和删除，容器被攻破时无法替换或覆盖私钥，误执行的清理、解压脚本也不会删到宿主机上的证书。
+- **配置文件用 `:ro`**：同上，应用只读取配置，不应回写；也能避免运行时把宿主机上的 `appsettings.Production.json` 改坏。
+- **日志和上传目录不要加 `:ro`**：应用需要往 `/app/logs` 和 `/app/UploadFiles` 写文件，加了只读会直接报错。
+- `:ro` 挡不住宿主机侧的修改。在宿主机上替换 PFX 后，容器不会热加载证书，需要重启容器才生效。
+- SELinux 为 enforcing 的主机（如 Rocky Linux），证书目录改写成 `:ro,Z`，否则容器内读取证书会报 permission denied，详见 3.10。
+
 启动后检查：
 
 ```bash
