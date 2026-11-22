@@ -9,7 +9,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="DSB.Framework.Lite.Data.EFCore.Repository.WebApi" Version="1.0.10" />
-		<PackageReference Include="DSB.Framework.Lite.Hangfire.Extensions" Version="1.0.8" />
+		<PackageReference Include="DSB.Framework.Lite.Hangfire.Extensions" Version="1.0.9" />
 		<PackageReference Include="DSB.Framework.Lite.WebApi.ApiKeyAuthorization" Version="1.0.7" />
 		<PackageReference Include="DSB.Framework.Lite.WebApi.EncryptionApi" Version="1.0.3" />
 		<PackageReference Include="DSB.Framework.Lite.WebApi.Extensions" Version="1.0.39" />
