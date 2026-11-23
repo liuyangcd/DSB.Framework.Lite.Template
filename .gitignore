@@ -6,3 +6,4 @@ obj
 TestResults
 *.trx
 /StartCodeBuddy.bat
+/src/SolutionName.HttpApi.Host/SolutionName.HttpApi.Host.csproj.user
